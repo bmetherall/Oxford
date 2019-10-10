@@ -1,0 +1,7 @@
+Documents/*
+Mansfield/*
+*.aux
+*.bbl
+*.blg
+*.log
+*.gz
