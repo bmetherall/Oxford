@@ -1,7 +1,7 @@
 % Exercise 1.1
 0.8 * (7/13 + 5/7)
 (2-3i)/(1+(1-4i)/(3-2i))
-1/(1-(5*10^7/(8*10^8))^2)
+1/sqrt(1-(5*10^7/(8*10^8))^2)
 
 % Exercise 1.2
 A = magic(3)
@@ -27,6 +27,14 @@ det(A)
 eig(A)
 
 % Exercise 1.5
+M = magic(5)
+m = M(:)
+m2 = flip(m)
+M2 = reshape(m2,[5,5])
+sort(M2) % sort(M2, 2)
+max(M2) % max(M2, 'all')
+prod(size(M2))
+numel(M2)
 
 % Exercise 1.6
 format long
