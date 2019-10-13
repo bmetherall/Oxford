@@ -1,0 +1,62 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{xcolor,graphicx}
+%\usepackage[subfolder,cleanup]{gnuplottex}
+%\usepackage{amsthm}
+%\usepackage{enumitem}
+%\usepackage{wrapfig}
+%\usepackage{subcaption}
+%\usepackage{hyperref}
+%\usepackage{tikz}
+
+%\usepackage[table]{xcolor}
+%\rowcolors{2}{gray!25}{white}
+
+\let\originalleft\left
+\let\originalright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
+
+\newcommand{\diff}[3][]{\frac{d^{#1}#2}{d{#3}^{#1}}}
+\newcommand{\pdiff}[3][]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
+
+\bibliographystyle{ieeetr}
+
+\title{Shaving Challenge}
+\author{Brady Metherall}
+\date{14 October, 2019}
+
+\newgeometry{margin=1in}
+%\setlength\parindent{0pt}
+
+\begin{document}
+\maketitle
+
+\section{A Model for Shaving}
+Most razors nowadays house multiple blades and are claimed to give a closer shave than a single blade. This assertion was investigated by Fitt, Lacey, and Wilmott \cite{fitt} mathematically to determine if / when an additional blade is able to trim the hairs shorter. Their mathematical model was derived by assuming the following mechanism. Each hair is treated as a rod that is initially normal to the face, when the first blade makes contact with the hair it is dragged\footnote{If the hair is not dragged at all any additional blades will be ineffective.} until a critical angle is reached. At this point the razor cuts the hair \cite{fitt}. After this initial cut, the hair springs back to its initial position. Ideally, at a time during this rebounding the second blade makes contact with the hair and cuts it immediately. \\
+
+The second blade will not trim the hair any shorter if the razor is moved too slowly since the hair will have returned to its original position by the time the second blade makes contact. Similarly, if the razor is moved too quickly the second blade will effectively cut the hair at the same time as the first---also leading to no advantage. Therefore, an optimal razor speed must exist to maximize the length of hair trimmed off. \\
+
+By solving their model Fitt, Lacey, and Wilmott found---for standard conditions---that the critical angle at which the hair is first cut is approximately $59^\circ$, and that the optimal shaving speed is $3.6$cm/s which yields an additional $0.27$mm of the hair removed compared to a single blade. Furthermore, they concluded that a shaving speed above the optimal is better than below due to the nature of the relationship between the velocity and the amount trimmed.
+
+\section{Additional Models}
+Multiple models for hair growth have been proposed in the literature. Individual hairs are in one of two phases: anagen, active hair growth, or telogen, dormancy; each phase lasts approximately 12 weeks \cite{kolinko}. Kolinko et al. \cite{kolinko} determined an optimal hair removal routine for several methods (shaving, plucking, laser, etc.) by considering two models while incorporating both phases of hair growth. One where the hair is assumed to be undamaged, as in shaving, and another, more complex, where a recovery phase is added due to damage to the hair follicle, such as with laser hair removal. Some believe shaving leads to an increased rate of hair growth. While this is true for some species, such as mice and guinea pigs \cite{lynfield} by inducing the anagen phase in telogenic hairs, shaving has been shown not to have an effect on hair growth in humans' legs \cite{lynfield}, and faces \cite{trotter}. Moreover, the shape of individual hairs can be modelled with Euler--Bernoulli beam theory \cite{howison}, which uses a similar assumption to \cite{fitt}. \\
+
+In addition to models specific to hair, there have been multiple attempts to model slicing and cutting more generally. Typically these models have been developed for industrial food production \cite{atkins2004, atkins2005, gubenia, zhou}. These models take one of two approaches---derived from energy conservation \cite{gubenia, zhou} or from stress tensors \cite{zhou}. Furthermore, while cutting there are two axes of motion, pushing the blade downwards into the media and dragging the blade along the surface. Each of these motions is itself relatively ineffective at cutting, and a optimal `push / slice' ratio exists \cite{atkins2004, atkins2005}. This notion also explains why straight razors usually do not pose the threat of a cut---the razor is moved perpendicular to the blade and thus, there is no slicing motion.
+
+\section{Extensions}
+The model in \cite{fitt} can be extend in a few ways. Their model only considered a two blade razor, however, many razors available today have three or more. Moreover, it was assumed that the hairs were normal to the face. This is unlikely to be the case and the exit angle of the hair, as well as the angle relative to the razor could impact the drag distance and, therefore, the closeness of the shave.
+
+\bibliography{Ref}
+
+\end{document}
+
+
+
+
+
+
+
