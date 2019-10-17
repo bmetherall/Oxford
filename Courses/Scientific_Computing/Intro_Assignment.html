@@ -1,0 +1,540 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Intro_Assignment</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-10-11"><meta name="DC.source" content="Intro_Assignment.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Brady Metherall</span>
+
+<span class="comment">% Exercise 1.1</span>
+disp(<span class="string">'Exercise 1.1'</span>)
+0.8 * (7/13 + 5/7)
+(2-3i)/(1+(1-4i)/(3-2i))
+1/sqrt(1-(5*10^7/(8*10^8))^2)
+
+<span class="comment">% Exercise 1.2</span>
+disp(<span class="string">'Exercise 1.2'</span>)
+A = magic(3)
+d = diag(A)
+B = [0 d'; d A]
+size(B)
+
+<span class="comment">% Exercise 1.3</span>
+disp(<span class="string">'Exercise 1.3'</span>)
+[-10:10]
+[7:-1/3:2]
+[2:0.05:3]*i
+
+<span class="comment">% Exercise 1.4</span>
+disp(<span class="string">'Exercise 1.4'</span>)
+d'*d
+d*d'
+A'*d
+B*[ones(1, 3); A]
+C = A + i*inv(A)
+C'
+conj(C)
+pinv(C)
+det(A)
+eig(A)
+
+<span class="comment">% Exercise 1.5</span>
+disp(<span class="string">'Exercise 1.5'</span>)
+M = magic(5)
+m = M(:)
+m2 = flip(m)
+M2 = reshape(m2,[5,5])
+sort(M2) <span class="comment">% sort(M2, 2)</span>
+max(M2) <span class="comment">% max(M2, 'all')</span>
+prod(size(M2))
+numel(M2)
+
+<span class="comment">% Exercise 1.6</span>
+disp(<span class="string">'Exercise 1.6'</span>)
+format <span class="string">long</span>
+t = linspace(0,1,10);
+integrand = 2 / sqrt(pi) * exp(-t.^2);
+(t(2) - t(1)) * sum(integrand);
+
+results = zeros(5,2);
+<span class="keyword">for</span> i = 1:5
+    t = linspace(0,1,10^i);
+    integrand = 2 / sqrt(pi) * exp(-t.^2);
+    results(i,:) = [10^i, (t(2) - t(1)) * sum(integrand)];
+<span class="keyword">end</span>
+results
+
+loglog(results(:,1), abs(results(:,2) - erf(1)),<span class="string">'-s'</span>)
+grid <span class="string">on</span>
+
+f = @(t) 2 / sqrt(pi) * exp(-t.^2);
+quad(f, 0, 1)
+
+<span class="comment">% Exercise 1.7</span>
+disp(<span class="string">'Exercise 1.7'</span>)
+x = linspace(0,1,10^5);
+trapz(x, exp(x.^3))
+
+x = linspace(0,10,10^5);
+trapz(x, (1 + x.^4).^(-1.0 / 2))
+
+x = linspace(0,5,10^5);
+trapz(x, sin(exp(x / 2)))
+</pre><pre class="codeoutput">Exercise 1.1
+
+ans =
+
+   1.002197802197802
+
+
+ans =
+
+  1.500000000000000 - 1.000000000000000i
+
+
+ans =
+
+   1.001958865736239
+
+Exercise 1.2
+
+A =
+
+     8     1     6
+     3     5     7
+     4     9     2
+
+
+d =
+
+     8
+     5
+     2
+
+
+B =
+
+     0     8     5     2
+     8     8     1     6
+     5     3     5     7
+     2     4     9     2
+
+
+ans =
+
+     4     4
+
+Exercise 1.3
+
+ans =
+
+  Columns 1 through 13
+
+   -10    -9    -8    -7    -6    -5    -4    -3    -2    -1     0     1     2
+
+  Columns 14 through 21
+
+     3     4     5     6     7     8     9    10
+
+
+ans =
+
+  Columns 1 through 3
+
+   7.000000000000000   6.666666666666667   6.333333333333333
+
+  Columns 4 through 6
+
+   6.000000000000000   5.666666666666667   5.333333333333334
+
+  Columns 7 through 9
+
+   5.000000000000000   4.666666666666667   4.333333333333333
+
+  Columns 10 through 12
+
+   4.000000000000000   3.666666666666667   3.333333333333333
+
+  Columns 13 through 15
+
+   3.000000000000000   2.666666666666667   2.333333333333333
+
+  Column 16
+
+   2.000000000000000
+
+
+ans =
+
+  Columns 1 through 3
+
+  10.000000000000000  10.250000000000000  10.500000000000000
+
+  Columns 4 through 6
+
+  10.750000000000000  11.000000000000000  11.250000000000000
+
+  Columns 7 through 9
+
+  11.500000000000000  11.750000000000000  12.000000000000000
+
+  Columns 10 through 12
+
+  12.250000000000000  12.500000000000000  12.750000000000000
+
+  Columns 13 through 15
+
+  13.000000000000000  13.250000000000000  13.500000000000000
+
+  Columns 16 through 18
+
+  13.750000000000000  14.000000000000000  14.250000000000000
+
+  Columns 19 through 21
+
+  14.500000000000000  14.750000000000000  15.000000000000000
+
+Exercise 1.4
+
+ans =
+
+    93
+
+
+ans =
+
+    64    40    16
+    40    25    10
+    16    10     4
+
+
+ans =
+
+    87
+    51
+    87
+
+
+ans =
+
+    87    51    87
+    99    75    75
+    72    96    72
+    69    69    93
+
+
+C =
+
+   8.736111111111111   0.277777777777778   6.319444444444445
+   2.694444444444445   5.111111111111111   7.527777777777778
+   3.902777777777778   9.944444444444445   1.486111111111111
+
+
+ans =
+
+   8.736111111111111   2.694444444444445   3.902777777777778
+   0.277777777777778   5.111111111111111   9.944444444444445
+   6.319444444444445   7.527777777777778   1.486111111111111
+
+
+ans =
+
+   8.736111111111111   0.277777777777778   6.319444444444445
+   2.694444444444445   5.111111111111111   7.527777777777778
+   3.902777777777778   9.944444444444445   1.486111111111111
+
+
+ans =
+
+   0.125187406296852  -0.116191904047976   0.056221889055472
+  -0.047226386806597   0.021739130434783   0.090704647676162
+  -0.012743628185907   0.159670164917541  -0.081709145427286
+
+
+ans =
+
+  -360
+
+
+ans =
+
+  15.000000000000004
+   4.898979485566361
+  -4.898979485566358
+
+Exercise 1.5
+
+M =
+
+    17    24     1     8    15
+    23     5     7    14    16
+     4     6    13    20    22
+    10    12    19    21     3
+    11    18    25     2     9
+
+
+m =
+
+    17
+    23
+     4
+    10
+    11
+    24
+     5
+     6
+    12
+    18
+     1
+     7
+    13
+    19
+    25
+     8
+    14
+    20
+    21
+     2
+    15
+    16
+    22
+     3
+     9
+
+
+m2 =
+
+     9
+     3
+    22
+    16
+    15
+     2
+    21
+    20
+    14
+     8
+    25
+    19
+    13
+     7
+     1
+    18
+    12
+     6
+     5
+    24
+    11
+    10
+     4
+    23
+    17
+
+
+M2 =
+
+     9     2    25    18    11
+     3    21    19    12    10
+    22    20    13     6     4
+    16    14     7     5    23
+    15     8     1    24    17
+
+
+ans =
+
+     3     2     1     5     4
+     9     8     7     6    10
+    15    14    13    12    11
+    16    20    19    18    17
+    22    21    25    24    23
+
+
+ans =
+
+    22    21    25    24    23
+
+
+ans =
+
+    25
+
+
+ans =
+
+    25
+
+Exercise 1.6
+
+results =
+
+   1.0e+05 *
+
+   0.000100000000000   0.000009275955702
+   0.001000000000000   0.000008504891212
+   0.010000000000000   0.000008434732395
+   0.100000000000000   0.000008427779743
+   1.000000000000000   0.000008427085105
+
+
+ans =
+
+   0.842700847014872
+
+Exercise 1.7
+
+ans =
+
+   1.341904418045378
+
+
+ans =
+
+   1.754075677258042
+
+
+ans =
+
+   1.103980484011042
+
+</pre><img vspace="5" hspace="5" src="Intro_Assignment_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Brady Metherall
+
+% Exercise 1.1
+disp('Exercise 1.1')
+0.8 * (7/13 + 5/7)
+(2-3i)/(1+(1-4i)/(3-2i))
+1/sqrt(1-(5*10^7/(8*10^8))^2)
+
+% Exercise 1.2
+disp('Exercise 1.2')
+A = magic(3)
+d = diag(A)
+B = [0 d'; d A]
+size(B)
+
+% Exercise 1.3
+disp('Exercise 1.3')
+[-10:10]
+[7:-1/3:2]
+[2:0.05:3]*i
+
+% Exercise 1.4
+disp('Exercise 1.4')
+d'*d
+d*d'
+A'*d
+B*[ones(1, 3); A]
+C = A + i*inv(A)
+C'
+conj(C)
+pinv(C)
+det(A)
+eig(A)
+
+% Exercise 1.5
+disp('Exercise 1.5')
+M = magic(5)
+m = M(:)
+m2 = flip(m)
+M2 = reshape(m2,[5,5])
+sort(M2) % sort(M2, 2)
+max(M2) % max(M2, 'all')
+prod(size(M2))
+numel(M2)
+
+% Exercise 1.6
+disp('Exercise 1.6')
+format long
+t = linspace(0,1,10);
+integrand = 2 / sqrt(pi) * exp(-t.^2);
+(t(2) - t(1)) * sum(integrand);
+
+results = zeros(5,2);
+for i = 1:5
+    t = linspace(0,1,10^i);
+    integrand = 2 / sqrt(pi) * exp(-t.^2);
+    results(i,:) = [10^i, (t(2) - t(1)) * sum(integrand)];
+end
+results
+
+loglog(results(:,1), abs(results(:,2) - erf(1)),'-s')
+grid on
+
+f = @(t) 2 / sqrt(pi) * exp(-t.^2);
+quad(f, 0, 1)
+
+% Exercise 1.7
+disp('Exercise 1.7')
+x = linspace(0,1,10^5);
+trapz(x, exp(x.^3))
+
+x = linspace(0,10,10^5);
+trapz(x, (1 + x.^4).^(-1.0 / 2))
+
+x = linspace(0,5,10^5);
+trapz(x, sin(exp(x / 2)))
+##### SOURCE END #####
+--></body></html>
