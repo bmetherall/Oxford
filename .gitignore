@@ -5,3 +5,5 @@ Mansfield/*
 *.blg
 *.log
 *.gz
+*errors
+/Courses/Mathematical_Modelling/Modelling_Project/Metherall_Report.pdf

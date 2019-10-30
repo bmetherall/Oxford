@@ -1,0 +1,49 @@
+\begin{tikzpicture}
+% Calibration point
+\fill [purple] (2.5,0) circle (1mm);
+
+% Ceiling
+\draw [decorate,decoration={border,angle=-60,amplitude=3mm,segment length=2mm}] (-3,0) -- (6,0);
+\draw [thick] (-3,0) -- (6,0);
+
+% Car
+\draw [decorate,decoration={border,angle=90,amplitude=3mm,segment length=1.88mm},domain=135:325] plot ({4+1.5*cos(\x)}, {4+1.5*sin(\x)});
+\draw [thick,domain=135:315,samples=250] plot ({4+1.5*cos(\x)}, {4+1.5*sin(\x)});
+\draw [->,Green] (4,4) -- (3.49,2.59) node [pos=0.5,anchor=west] {$R$};
+
+% Anchor
+\fill [domain=0:180] plot ({0.3*cos(\x)}, {0.6*sin(\x)});
+
+% Lengths
+\draw [|<->|,oshift=4mm,Green] (0,0.3) -- (-2.5,2) node [fill=white,pos=0.5,xshift=-2.5mm,yshift=-3mm] {$L_1$};
+\draw [|<->|,oshift=4mm,Green] (-2.5,2) -- (-1,5) node [fill=white,pos=0.5,xshift=-4mm,yshift=2mm] {$L_2$};
+\draw [|<->|,oshift=4mm,Green] (-1,5) -- (1.5,4) node [fill=white,pos=0.5,xshift=3mm,yshift=3.5mm] {$L_3$};
+
+% Arms
+\draw [blue,very thick,double,double distance=1.5mm] (0,0.3) -- (-2.5,2) -- (-1,5) -- (1.5,4) -- (2,4);
+\fill (2,3.8) -- (2,4.2) -- (2.4,4) -- cycle;
+
+% Joints
+\draw [thick,fill=white] (0,0.3) circle (0.2);
+\draw [thick,fill=white] (-2.5,2) circle (0.2);
+\draw [thick,fill=white] (-1,5) circle (0.2);
+\draw [thick,fill=white] (1.5,4) circle (0.2);
+\fill (0,0.3) circle (0.05);
+\fill (-2.5,2) circle (0.05);
+\fill (-1,5) circle (0.05);
+\fill (1.5,4) circle (0.05);
+
+% Angles
+\draw [red,dashed] (0,0.3) -- (1.25,0.3) node [pos=0.6,anchor=south] {$\theta_1$};
+\draw [red,dashed] (-2.5,2) -- (-1.25,2) node [pos=0.6,anchor=south] {$\theta_2$};
+\draw [red,dashed] (-1,5) -- (0.25,5) node [pos=0.6,anchor=south] {$\theta_3$};
+\draw [->,red] (0.5,0.3) arc (0:132.5:0.5);
+\draw [->,red] (-2,2) arc (0:50:0.5);
+\draw [->,red] (-0.5,5) arc (0:325:0.5);
+
+% Coordinates
+\draw [<->,thin] (5,0.5) -- (4,0.5) -- (4,1.5);
+\node [anchor=west] at (5,0.5) {$x$};
+\node [anchor=south] at (4,1.5) {$y$};
+
+\end{tikzpicture}

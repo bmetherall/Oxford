@@ -1,0 +1,21 @@
+\begin{tikzpicture}[x=0.707cm,y=0.707cm]
+% Car
+\draw [decorate,decoration={border,angle=90,amplitude=3mm,segment length=1.895mm},domain=200:252] plot ({10/sqrt(2) + 10*cos(\x)}, {10/sqrt(2) + 10*sin(\x)});
+\draw [thick,domain=200:250,samples=250] plot ({10/sqrt(2) + 10*cos(\x)}, {10/sqrt(2) + 10*sin(\x)});
+
+% Green outline
+\draw [domain=200:250,samples=250,Green,dashed] plot ({10/sqrt(2) + 12.82842*cos(\x)}, {10/sqrt(2) + 12.82842*sin(\x)});
+
+% Arms
+\draw [blue,very thick,double,double distance=3mm] (-4,-5) -- (-2.82842,0) -- (-0.7,0);
+\fill (-0.8,-0.4) -- (-0.8,0.4) -- (0,0) -- cycle;
+
+% Joint
+\draw [thick,fill=white] (-2.82842,0) circle (0.4);
+\fill (-2.82842,0) circle (0.1);
+
+% Red semicircle
+\fill [red] (0,0) circle (0.75mm); % Dot
+\draw [thick,red] (-2,2) -- (2,-2); % Line
+\draw [thick,red,<->] (-2,2) arc (135:315:2.82842); % Arc
+\end{tikzpicture}
