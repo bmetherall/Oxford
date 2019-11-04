@@ -1,0 +1,143 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{xcolor,graphicx}
+%\usepackage[subfolder,cleanup]{gnuplottex}
+%\usepackage{amsthm}
+%\usepackage{enumitem}
+%\usepackage{wrapfig}
+%\usepackage{subcaption}
+%\usepackage{hyperref}
+\usepackage{tikz}
+
+\usetikzlibrary{%
+	decorations.pathreplacing,%
+ 	decorations.pathmorphing%
+}
+
+%\usepackage[table]{xcolor}
+%\rowcolors{2}{gray!25}{white}
+
+\let\originalleft\left
+\let\originalright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
+
+\newcommand{\df}{\, \textrm{d}}
+\newcommand{\e}{\textrm{e}}
+\newcommand{\diff}[3][]{\frac{\df^{#1}#2}{\df{#3}^{#1}}}
+\newcommand{\pdiff}[3][]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
+
+\definecolor{Beer}{HTML}{FFCC00}
+
+%\bibliographystyle{ieeetr}
+
+\title{}
+\author{Brady Metherall}
+\date{}
+
+\newgeometry{margin=2cm}
+%\setlength\parindent{0pt}
+
+\begin{document}
+\maketitle
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}
+\draw [scale=4,domain=-1.36921:1.20148,smooth,variable=\x,fill=Beer,opacity=0.65] plot ({\x)},{0.5 * (1 - (\x*\x - 1) * (\x + 3/10)^2)});
+\node at (1.6,4*0.7058) [anchor=south,rotate=21.4,yshift=-1mm] {$h(x,t)$};
+
+\draw [->] (-6,0) -- (6,0) node [right] {$x$};
+\draw [decorate,decoration={border,angle=-120,amplitude=3mm,segment length=2mm}] (-6,0) -- (6,0);
+
+\draw [->] (0,0) -- (0,3.5) node [above] {$y$};
+\end{tikzpicture}
+\caption{Beer spilled on a table.}
+\label{fig}
+\end{figure}
+
+\begin{align*}
+\rho \left( \pdiff{\mathbf{u}}{t} + \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} \right) &= - \nabla p + \mu \nabla^2 \mathbf{u} + \rho \mathbf{g}
+\end{align*}
+
+\section{2d}
+\begin{align}
+\pdiff{h}{t} = \frac{1}{3} \nabla \left( h^3 \nabla h \right)
+\label{eq:height}
+\end{align}
+
+\begin{align}
+\int_\mathbb{R} h \df x
+\label{eq:int}
+\end{align}
+
+$h(x,t) = t^\alpha f(\eta)$ where $\eta = x t^{-\beta}$
+
+$\alpha = -1/5$ $\beta = 1/5$
+
+\begin{align*}
+\frac{-3}{5} \left( \eta f' + f \right) = \left( f^3 f \right)'
+\end{align*}
+
+
+\begin{align*}
+f = \left( \frac{9}{10} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
+\end{align*}
+
+\begin{align*}
+\eta_* &= \left( \frac{6075 \Gamma^6 \left( \frac{2}{3} \right) \Gamma^6 \left( \frac{11}{6} \right)}{16 \pi^9} \right)^{1/10} \\
+&\approx 0.747412
+\end{align*}
+
+\section{Polar}
+solve \eqref{eq:height} and \eqref{eq:int} in polar
+
+$\alpha = -1/4$ $\beta = 1/8$
+
+\begin{align*}
+\frac{-3}{8} \left( 2 \eta f + \eta^2 f' \right) = \left( \eta f^3 f' \right)'
+\end{align*}
+
+\begin{align*}
+f = \left( \frac{9}{16} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
+\end{align*}
+
+\begin{align*}
+\eta_* &= \left( \frac{1024}{243 \pi^3} \right)^{1/8} \\
+&\approx 0.779212
+\end{align*}
+
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[auto,rotate=-30]
+
+\draw [scale=4,domain=-1.36921:1.20148,smooth,variable=\x,fill=Beer,opacity=0.65] plot ({\x)},{0.5 * (1 - (\x*\x - 1) * (\x + 3/10)^2)});
+\node at (1.6,4*0.7058) [anchor=south,rotate=21.4-30,yshift=-1mm] {$h(x,t)$};
+
+
+\draw [->] (-6,0) -- (6,0) node [right] {$x$};
+\draw [decorate,decoration={border,angle=-120,amplitude=3mm,segment length=2mm}] (-6,0) -- (6,0);
+
+\draw [->] (0,0) -- (0,3.5) node [above] {$y$};
+
+\draw [->] (0,0) -- (1,-2*0.866) node [below] {$\mathbf{g}$};
+
+\draw [dashed,blue] (-2*0.866,-1) -- (2*0.866,1);
+
+
+\draw [<-,blue] (1.5,0) arc (0:30:1.5) node [pos=0.6,anchor=west] {$\alpha$};
+
+
+
+\end{tikzpicture}
+\caption{Beer spilled on a crooked table.}
+\label{fig}
+\end{figure}
+
+%\bibliography{Ref}
+
+\end{document}
