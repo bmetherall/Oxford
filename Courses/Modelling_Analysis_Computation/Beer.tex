@@ -1,14 +1,14 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper,twocolumn]{article}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
-\usepackage{geometry}
+\usepackage[showframe]{geometry}
 \usepackage{xcolor,graphicx}
-%\usepackage[subfolder,cleanup]{gnuplottex}
+\usepackage[subfolder,cleanup]{gnuplottex}
 %\usepackage{amsthm}
 %\usepackage{enumitem}
 %\usepackage{wrapfig}
-%\usepackage{subcaption}
+\usepackage{subcaption}
 %\usepackage{hyperref}
 \usepackage{tikz}
 
@@ -32,11 +32,11 @@
 
 \definecolor{Beer}{HTML}{FFCC00}
 
-%\bibliographystyle{ieeetr}
+\bibliographystyle{ieeetr}
 
 \title{}
 \author{Brady Metherall}
-\date{}
+\date{11 November 2019}
 
 \newgeometry{margin=2cm}
 %\setlength\parindent{0pt}
@@ -46,7 +46,7 @@
 
 \begin{figure}[tbp]
 \centering
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=0.6]
 \draw [scale=4,domain=-1.36921:1.20148,smooth,variable=\x,fill=Beer,opacity=0.65] plot ({\x)},{0.5 * (1 - (\x*\x - 1) * (\x + 3/10)^2)});
 \node at (1.6,4*0.7058) [anchor=south,rotate=21.4,yshift=-1mm] {$h(x,t)$};
 
@@ -65,7 +65,7 @@
 
 \section{2d}
 \begin{align}
-\pdiff{h}{t} = \frac{1}{3} \nabla \left( h^3 \nabla h \right)
+\pdiff{h}{t} = \frac{1}{3} \nabla \cdot \left( h^3 \nabla h \right)
 \label{eq:height}
 \end{align}
 
@@ -92,6 +92,69 @@ f = \left( \frac{9}{10} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 &\approx 0.747412
 \end{align*}
 
+
+
+
+
+\begin{figure*}[tbp]
+\centering
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.2in,1.75in lw 3}]
+set grid
+set format x '%.1f'
+set format y '%.2f'
+set xl '$x t^{-1/5}$'
+set yl '$t^{1/5} h(x,t)$'
+set ytics 0.25
+set xr [-1:1]
+set yr [0:1]
+set size ratio -1
+p 'Cartesian.dat' u 1:2 w l not
+\end{gnuplot}
+\caption{}
+\label{fig:}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.2in,1.75in lw 3}]
+set grid
+set format x '%.1f'
+set format y '%.2f'
+set xl '$r t^{-1/8}$'
+set yl '$t^{1/4} h(r,t)$'
+set ytics 0.25
+set xr [-1:1]
+set yr [0:1]
+set size ratio -1
+p 'Polar.dat' u 1:2 w l not
+\end{gnuplot}
+\caption{}
+\label{fig:}
+\end{subfigure}
+\caption{}
+\label{fig:}
+\end{figure*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Polar}
 solve \eqref{eq:height} and \eqref{eq:int} in polar
 
@@ -113,7 +176,7 @@ f = \left( \frac{9}{16} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 
 \begin{figure}[tbp]
 \centering
-\begin{tikzpicture}[auto,rotate=-30]
+\begin{tikzpicture}[auto,rotate=-30,scale=0.6]
 
 \draw [scale=4,domain=-1.36921:1.20148,smooth,variable=\x,fill=Beer,opacity=0.65] plot ({\x)},{0.5 * (1 - (\x*\x - 1) * (\x + 3/10)^2)});
 \node at (1.6,4*0.7058) [anchor=south,rotate=21.4-30,yshift=-1mm] {$h(x,t)$};
@@ -138,6 +201,8 @@ f = \left( \frac{9}{16} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 \label{fig}
 \end{figure}
 
-%\bibliography{Ref}
+
+\cite{gradshteyn, zwillinger}
+\bibliography{Ref}
 
 \end{document}
