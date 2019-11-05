@@ -12,6 +12,8 @@
 %\usepackage{hyperref}
 \usepackage{tikz}
 
+\usepackage{lipsum}
+
 \usetikzlibrary{%
 	decorations.pathreplacing,%
  	decorations.pathmorphing%
@@ -92,8 +94,38 @@ f = \left( \frac{9}{10} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 &\approx 0.747412
 \end{align*}
 
+\lipsum[1]
 
 
+\begin{figure}[tbp]
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 2.95in,2in lw 3}]
+set grid front
+set format x '%.1f'
+set format y '%.0f'
+set format cb '%.1f'
+set palette rgb 23,28,3
+set xr [-1:1.5]
+
+set xl '$x$'
+set yl rotate by 0 '$t$'
+set cbl '$h(x,t)$'
+
+set view map
+
+sp 'Char.dat' u 1:2:3 w image not, \
+'Edges.dat' u 7:8:(0) w l dt 3 lc 8 lw 0.5 not, \
+'Edges.dat' u 1:2:(0) w l lc 8 not, \
+'Edges.dat' u 3:4:(0) w l lc 8 not, \
+'Edges.dat' u 5:6:(0) w l lc 8 not, \
+'Shock2.dat' u 1:2:(0) w l lc 8 not
+\end{gnuplot}
+\caption{}
+\label{fig:}
+\end{figure}
+
+
+\lipsum[2]
 
 
 \begin{figure*}[tbp]
@@ -200,6 +232,12 @@ f = \left( \frac{9}{16} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 \caption{Beer spilled on a crooked table.}
 \label{fig}
 \end{figure}
+
+
+
+
+
+
 
 
 \cite{gradshteyn, zwillinger}
