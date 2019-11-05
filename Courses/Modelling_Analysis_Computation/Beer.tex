@@ -113,14 +113,20 @@ set cbl '$h(x,t)$'
 
 set view map
 
+set label 1 'I' at -0.75, 2.42 front center
+set label 2 'II' at 0.25, 0.42 front center
+set label 3 'III' at 1.25, 2.42 front center
+set label 4 'IV' at 0.25, 3.42 front center
+
 sp 'Char.dat' u 1:2:3 w image not, \
 'Edges.dat' u 7:8:(0) w l dt 3 lc 8 lw 0.5 not, \
 'Edges.dat' u 1:2:(0) w l lc 8 not, \
 'Edges.dat' u 3:4:(0) w l lc 8 not, \
 'Edges.dat' u 5:6:(0) w l lc 8 not, \
 'Shock2.dat' u 1:2:(0) w l lc 8 not
+
 \end{gnuplot}
-\caption{}
+\caption{$\alpha = \pi / 6$}
 \label{fig:}
 \end{figure}
 
