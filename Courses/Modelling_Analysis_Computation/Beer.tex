@@ -31,6 +31,8 @@
 \newcommand{\e}{\textrm{e}}
 \newcommand{\diff}[3][]{\frac{\df^{#1}#2}{\df{#3}^{#1}}}
 \newcommand{\pdiff}[3][]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
+\newcommand{\eps}{\varepsilon}
+\providecommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}\mathcal{O}\mathopen{}\left(#1\right)}}
 
 \definecolor{Beer}{HTML}{FFCC00}
 
@@ -63,13 +65,36 @@
 \label{fig}
 \end{figure}
 
+$\eps := H / L \ll 1$
+
 \begin{align*}
 \rho \left( \pdiff{\mathbf{u}}{t} + \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} \right) &= - \nabla p + \mu \nabla^2 \mathbf{u} + \rho \mathbf{g}
 \end{align*}
 
-\section{2d}
 \begin{align}
-\pdiff{h}{t} = \frac{1}{3} \nabla \cdot \left( h^3 \nabla h \right)
+\text{Re}' \left( u_t + u \, u_x + v \, u_y \right) &= - p_x + \eps^2 u_{xx} + u_{yy}, 
+\end{align}
+
+\begin{multline}
+\text{Re}' \eps^2 \left( v_t + u \, v_x + v \, v_y \right) = \\
+- p_y + \eps^4 v_{xx} + \eps^2 v_{yy} - 1
+\end{multline}
+
+\begin{align}
+\bigO{1}: p_x = u_{yy} \\
+\bigO{1}: p_y = -1
+\end{align}
+
+\begin{align}
+u = -\frac{1}{2} \left( 2hy - y^2 \right) h_x
+\end{align}
+
+integrate to find flux
+
+conservation of mas then becomes
+
+\begin{align}
+h_t = \frac{1}{3} \nabla \cdot \left( h^3 \nabla h \right)
 \label{eq:height}
 \end{align}
 
