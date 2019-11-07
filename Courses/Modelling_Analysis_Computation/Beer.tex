@@ -48,6 +48,13 @@
 \begin{document}
 \maketitle
 
+\section{Introduction}
+
+\begin{align}
+\rho \left( \pdiff{\mathbf{u}}{t} + \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} \right) &= - \nabla p + \mu \nabla^2 \mathbf{u} + \rho \mathbf{g}
+\label{eq:ns}
+\end{align}
+
 \begin{figure}[tbp]
 \centering
 \begin{tikzpicture}[scale=0.6]
@@ -65,36 +72,27 @@
 \label{fig}
 \end{figure}
 
-$\eps := H / L \ll 1$
+$\eps := H L^{-1} \ll 1$
 
-\begin{align*}
-\rho \left( \pdiff{\mathbf{u}}{t} + \left( \mathbf{u} \cdot \nabla \right) \mathbf{u} \right) &= - \nabla p + \mu \nabla^2 \mathbf{u} + \rho \mathbf{g}
-\end{align*}
-
+\section{Flat Table}
+We shall begin by non-dimensionalizing \eqref{eq:ns} by scaling time by the characteristic length divided by the characteristic fluid speed, the pressure as hydrostatic, and by assuming the fluid motion is driven by the pressure gradient \cite{howison}. This yields
 \begin{align}
-\text{Re}' \left( u_t + u \, u_x + v \, u_y \right) &= - p_x + \eps^2 u_{xx} + u_{yy}, 
+\nonumber \text{Re}' \left( u_t + u \, u_x + v \, u_y \right) &= - p_x + \eps^2 u_{xx} + u_{yy}, \\
+\text{Re}' \eps^2 \left( v_t + u \, v_x + v \, v_y \right) &= \\
+\nonumber - p_y &+ \eps^4 v_{xx} + \eps^2 v_{yy} - 1,
+\end{align}
+for the $x$ and $y$ components, respectively, and where Re$'$ is the reduced Reynolds number. To leading order we obtain
+\begin{align}
+\bigO{1}&: & p_x &= u_{yy}, & \bigO{1}&: & p_y &= -1.
+\end{align}
+After imposing the boundary conditions that $u = 0$ on $x = 0$, and $u_y = 0$ on $y = h$, where $h$ is the height of the fluid, we find
+\begin{align}
+u = -\frac{1}{2} \left( 2hy - y^2 \right) h_x.
 \end{align}
 
-\begin{multline}
-\text{Re}' \eps^2 \left( v_t + u \, v_x + v \, v_y \right) = \\
-- p_y + \eps^4 v_{xx} + \eps^2 v_{yy} - 1
-\end{multline}
-
+We can now readily find the flux of the flow, and therefore, develop an equation of conservation. The mass flux is given as the flow of the fluid multiplied by its velocity---that is, the flux is $\int_0^h u \df y$. Conservation of mass now yields
 \begin{align}
-\bigO{1}: p_x = u_{yy} \\
-\bigO{1}: p_y = -1
-\end{align}
-
-\begin{align}
-u = -\frac{1}{2} \left( 2hy - y^2 \right) h_x
-\end{align}
-
-integrate to find flux
-
-conservation of mas then becomes
-
-\begin{align}
-h_t = \frac{1}{3} \nabla \cdot \left( h^3 \nabla h \right)
+h_t = \frac{1}{3} \nabla \cdot \left( h^3 \nabla h \right).
 \label{eq:height}
 \end{align}
 
@@ -121,44 +119,11 @@ f = \left( \frac{9}{10} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 &\approx 0.747412
 \end{align*}
 
-\lipsum[1]
 
 
-\begin{figure}[tbp]
-\centering
-\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 2.95in,2in lw 3}]
-load './Blues.p'
-
-set grid front
-set format x '%.1f'
-set format y '%.0f'
-set format cb '%.1f'
-set xr [-1:1.5]
-
-set xl '$x$'
-set yl rotate by 0 '$t$'
-set cbl '$h(x,t)$'
-
-set view map
-
-set label 1 'I' at -0.75, 2.42 front center
-set label 2 'II' at 0.25, 0.42 front center
-set label 3 'III' at 1.25, 2.42 front center
-set label 4 'IV' at 0.25, 3.42 front center
-
-sp 'Char.dat' u 1:2:3 w image not, \
-'Edges.dat' u 7:8:(0) w l dt 3 lc 8 lw 0.5 not, \
-'Edges.dat' u 1:2:(0) w l lc 8 not, \
-'Edges.dat' u 3:4:(0) w l lc 8 not, \
-'Edges.dat' u 5:6:(0) w l lc 8 not, \
-'Shock2.dat' u 1:2:(0) w l lc 8 not
-\end{gnuplot}
-\caption{$\alpha = \pi / 6$}
-\label{fig:}
-\end{figure}
 
 
-\lipsum[2]
+
 
 
 \begin{figure*}[tbp]
@@ -203,7 +168,7 @@ p 'Polar.dat' u 1:2 w l not
 
 
 
-\section{Polar}
+\subsection{Polar}
 solve \eqref{eq:height} and \eqref{eq:int} in polar
 
 $\alpha = -1/4$ $\beta = 1/8$
@@ -243,8 +208,106 @@ f = \left( \frac{9}{16} \right)^{1/3} \left( \eta_*^2 - \eta^2 \right)^{1/3}
 \label{fig}
 \end{figure}
 
+\section{Angled Table}
+\begin{multline}
+\text{Re}' \left( u_t + u \, u_x + v \, u_y \right) = \\
+- \eps p_x + \eps^2 u_{xx} + u_{yy} + \sin \alpha, 
+\end{multline}
+
+\begin{multline}
+\text{Re}' \eps \left( v_t + u \, v_x + v \, v_y \right) = \\
+- p_y + \eps^3 v_{xx} + \eps v_{yy} - \cos \alpha
+\end{multline}
+
+
+\begin{align}
+\bigO{1}&: & u_{yy} &= - \sin \alpha \\
+\bigO{1}&: & p_y &= - \cos \alpha
+\end{align}
+
+\begin{align}
+u = \frac{1}{2} \sin \alpha \left( 2hy - y^2 \right)
+\end{align}
+
+mass conservation becomes
+
+\begin{align}
+h_t + \frac{1}{3} \sin \alpha (h^3)_x = 0
+\end{align}
+
+\begin{figure}[tbp]
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 2.95in,2in lw 3}]
+load './Blues.p'
+
+set grid front
+set format x '%.1f'
+set format y '%.0f'
+set format cb '%.1f'
+set xr [-1:1.5]
+
+set xl '$x$'
+set yl rotate by 0 '$t$'
+set cbl '$h(x,t)$'
+
+set view map
+
+set label 1 'I' at -0.75, 2.42 front center
+set label 2 'II' at 0.25, 0.42 front center
+set label 3 'III' at 1.25, 2.42 front center
+set label 4 'IV' at 0.25, 3.42 front center
+
+sp 'Char.dat' u 1:2:3 w image not, \
+'Edges.dat' u 7:8:(0) w l dt 3 lc 8 lw 0.5 not, \
+'Edges.dat' u 1:2:(0) w l lc 8 not, \
+'Edges.dat' u 3:4:(0) w l lc 8 not, \
+'Edges.dat' u 5:6:(0) w l lc 8 not, \
+'Shock2.dat' u 1:2:(0) w l lc 8 not
+\end{gnuplot}
+\caption{$\alpha = \pi / 6$}
+\label{fig:}
+\end{figure}
+
+
+\begin{figure}[tbp]
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.2in,1.75in lw 3}]
+set grid
+set format x '%.0f'
+set format y '%.1f'
+
+set xtics 3
+set ytics 0.5
+
+set xr [0:15]
+set yr [0:2]
+
+set xl '$t$'
+set yl rotate 'Flow Rate $\left( \times 10^{-1} \right)$'
+
+p 'Flow.dat' u 1:(10*$2) w l t '$x = 0.6$', \
+'Flow.dat' u 1:(10*$3) w l t '$x = 1.0$' dt 2, \
+'Flow.dat' u 1:(10*$4) w l t '$x = 1.4$' dt 5
+\end{gnuplot}
+\caption{$\alpha = \pi / 6$}
+\label{fig:}
+\end{figure}
+
+
+\begin{align}
+h_0(x) =
+\begin{cases}
+1 & |x| \leq \frac{1}{2} \\
+0 & \text{otherwise}
+\end{cases}
+\end{align}
+
 
 \cite{gradshteyn, zwillinger}
+
+\section{Conclusion}
+
+
 \bibliography{Ref}
 
 \end{document}
