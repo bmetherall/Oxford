@@ -43,12 +43,23 @@ a = np.pi / 6
 z = np.zeros((10**6,3))
 counter = 0
 
-for x in np.linspace(-1,2,10**3):
-	for t in np.linspace(0,5,10**3):
-		z[counter] = [x, t, h(x, t, a)]
-		counter += 1
+#for x in np.linspace(-1,2,10**3):
+#	for t in np.linspace(0,6,10**3):
+#		z[counter] = [x, t, h(x, t, a)]
+#		counter += 1
 
-np.savetxt('Char.dat', z)
+#np.savetxt('Char.dat', z)
+
+
+
+z = np.zeros((10**2,2))
+counter = 0
+
+for t in np.linspace(3,6,10**2):
+	z[counter] = [sigma(t, a), t]
+	counter += 1
+
+np.savetxt('Shock2.dat', z)
 
 
 
