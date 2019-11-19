@@ -1,58 +1,100 @@
-using Random
-using LinearAlgebra
-#using Distributed
-#using SharedArray
+@everywhere using Random
+@everywhere using LinearAlgebra
+@everywhere using Statistics
+@everywhere using DelimitedFiles
+using Distributed
+using SharedArrays
 
-function FullRank(m, n)
-	return randn((m, n))
+# Generate different types of matrix
+@everywhere function FullRank(m::Int64, n::Int64) # Full rank matrix
+	return randn(m, n)
 end
 
-function PartRank(m, n, r)
-	return randn((m, r)) * randn((r, n))
+@everywhere function PartRank(m::Int64, n::Int64, r::Int64) # Rank-r matrix
+	return randn(m, r) * randn(r, n) # Product of two rank-r matrices
 end
 
-function GeoSig(m, n; base = 10, coeff = 1)
+@everywhere function GeoSig(m::Int64, n::Int64; base = 10, coeff = 1) # Geometrically decaying sigma
+	# Create two orthogonal matrices from QR of random matrices
 	Q1 = Array(qr(randn(m, n)).Q)
 	Q2 = Array(qr(randn(n, n)).Q)
-	S = Diagonal(coeff .* convert(Float64, base).^(-(0:n-1)))
+	S = Diagonal(coeff .* convert(Float64, base).^(-(0:n-1))) # Prescribe sigmas
 	return Q1 * S * Q2
 end
 
-function RandSVD(A, r, l)
+@everywhere function AlgSig(m::Int64, n::Int64; pow = 2, coeff = 1) # Algebraically decaying sigma
+	# Create two orthogonal matrices from QR of random matrices
+	Q1 = Array(qr(randn(m, n)).Q)
+	Q2 = Array(qr(randn(n, n)).Q)
+	S = Diagonal(coeff .* (1:n).^(-pow)) # Prescribe sigmas
+	return Q1 * S * Q2
+end
+
+# Compute the two SVDs
+@everywhere function RandSVD(A, r::Int64, l::Int64 = 5) # Randomized SVD
 	m, n = size(A)
-	Omega = randn((n, r + l))
+	Omega = randn(n, r + l)
 	Q = Array(qr(A * Omega).Q)
 	C = svd(transpose(Q) * A)
 	U, V = Array(C.U), Array(C.Vt)
-
+	println(size(Q))
+	println(size(U))
 	return (Q * U) * Diagonal(Array(C.S)) * V
 end
 
-function Solve(m, n, N = 25, l = 5, rmax = n)
-	for i in 1:rmax
-		for j in 1:N
-			RandSVD(FullRank(m, n), i, l)
-		end
-	end
-
+@everywhere function TruncSVD(A, r::Int64) # Trucated SVD
+	Fact = svd(A)
+	return Fact.U[:,1:r] * Diagonal(Fact.S[1:r]) * Fact.Vt[1:r,:]
 end
 
+# Main function to compute errors
+function Solve(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n - l; fname = "Norm.dat")
+    f = open(fname, "w");
+	for i in 1:rmax # Loop over ranks
+		res = SharedArray{Float64, 2}((N, 3)) # Results array (shared between all workers)
+		println(i)
+		# Perform the decomposition N times to get average errors
+		@sync @distributed for j in 1:N # Parallel for loop
+			A = FullRank(m, n)
+			#A = PartRank(m, n, i)
+			#A = GeoSig(m, n; coeff = 10, base = 0.9)
+			#A = AlgSig(m, n; coeff = 10, pow = 1.5)
+			
+			Arand = RandSVD(A, i, l)
+			Atrunc = TruncSVD(A, i)
+			
+			# 2 norm, F norm, trace norm
+			res[j,:] = [opnorm(A - Arand) / opnorm(A - Atrunc) norm(A - Arand) / norm(A - Atrunc) opnorm(A - Arand, 1) / opnorm(A - Atrunc, 1)]
+		end
+		# Compute means and standard deviations for the three norms
+		avg2 = mean(res[:,1])
+		sd2 = std(res[:,1]) / sqrt(N)
+		avgF = mean(res[:,2])
+		sdF = std(res[:,2]) / sqrt(N)
+		avgT = mean(res[:,3])
+		sdT = std(res[:,3]) / sqrt(N)
+		writedlm(f, [i avg2 sd2 avgF sdF avgT sdT])
+    end
+    close(f)
+end
 
-RandSVD(randn((2, 2)), 2, 2) # Compile
+# Compile
+RandSVD(randn(8, 5), 4, 2)
+TruncSVD(randn(8, 5), 4)
+Solve(2, 2, 2, 1)
 
-m = 1000
-n = 800
-r = 600
+m = 500
+n = 250
 l = 5
 
-N = 1000
+N = 144
 
-GeoSig(4,3)
+RandSVD(FullRank(m,n),50)
 
-A = GeoSig(15,11; coeff = 67)
-
-println(svdvals(A))
-println(size(A))
+#Solve(m, n, N, l; fname = "FullRankNorms.dat")
+#Solve(m, n, N, l; fname = "PartRankNorms.dat")
+#Solve(m, n, N, l; fname = "GeoNorms.dat")
+#Solve(m, n, N, l; fname = "AlgNorms.dat")
 
 
 

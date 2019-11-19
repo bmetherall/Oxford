@@ -4,11 +4,11 @@
 \usepackage{amsmath}
 \usepackage{geometry}
 \usepackage{xcolor,graphicx}
-%\usepackage[subfolder,cleanup]{gnuplottex}
+\usepackage[subfolder,cleanup]{gnuplottex}
 \usepackage{amsthm}
 %\usepackage{enumitem}
 %\usepackage{wrapfig}
-%\usepackage{subcaption}
+\usepackage{subcaption}
 %\usepackage{hyperref}
 %\usepackage{tikz}
 
@@ -28,9 +28,9 @@
 
 %\bibliographystyle{ieeetr}
 
-\title{}
+\title{Randomized SVD}
 \author{Brady Metherall}
-\date{}
+\date{25 November 2019}
 
 \newgeometry{margin=2cm}
 %\setlength\parindent{0pt}
@@ -38,23 +38,105 @@
 \begin{document}
 \maketitle
 
-\begin{theorem}[Eckart--Young--Mirsky]
-The $r$-truncated SVD of a matrix, $A$ is the best rank $r$ approximation in the spectral norm.
-\end{theorem}
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+set grid
+#set format x '%.1f'
+set format y '%.1f'
 
-\begin{proof}
-this is the proof
+set ytics 0.4
 
-\begin{align*}
-\| A - B \|_2^2 &\geq \| \left( A - B \right) x \|_2^2 \\
-&= \| Ax \|_2^2 \\
-&= \| U \Sigma V^T x \|_2^2 \\
-&= \| \Sigma V^T x \|_2^2 \\
-&= \text{expand} \\
-&\geq \sigma_{r+1}^2 \\
-&= \| A - A_r \|_2^2
-\end{align*}
-\end{proof}
+set yr [1:]
+set xr [10:240]
+
+set key width -2
+set key top left
+
+set xl '$r$'
+set yl 'Error'
+
+p 'FullRankNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
+'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+\end{gnuplot}
+\caption{Full Rank}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+set grid
+#set format x '%.1f'
+#set format y '%.1f'
+
+set ytics 1
+
+set yr [1:]
+set xr [10:240]
+
+set key width -2
+set key top left
+
+set xl '$r$'
+set yl 'Error'
+
+p 'PartRankNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
+'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+\end{gnuplot}
+\caption{Part Rank}
+\end{subfigure} \\
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+set grid
+#set format x '%.1f'
+#set format y '%.2f'
+
+set ytics 1, 2
+
+set yr [1:7]
+set xr [10:240]
+
+set key width -2
+set key top left
+
+set xl '$r$'
+set yl 'Error'
+
+p 'GeoNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
+'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+\end{gnuplot}
+\caption{Geo Rank}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+set grid
+#set format x '%.1f'
+set format y '%.1f'
+
+set ytics 0.5
+
+set yr [1:]
+set xr [10:240]
+
+set key width -2
+set key bottom
+
+set xl '$r$'
+set yl 'Error'
+
+p 'AlgNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
+'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+\end{gnuplot}
+\caption{Alg Rank}
+\end{subfigure}
+\end{figure}
 
 %\bibliography{Ref}
 
