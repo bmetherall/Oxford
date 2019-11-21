@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper,twocolumn]{article}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -20,13 +20,15 @@
 \renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
 \renewcommand{\right}{\aftergroup\egroup\originalright}
 
+\DeclareMathOperator{\argmin}{arg\,min}
+
 \newcommand{\diff}[3][]{\frac{d^{#1}#2}{d{#3}^{#1}}}
 \newcommand{\pdiff}[3][]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
 \newcommand{\df}{\, \textrm{d}}
 
 \newtheorem{theorem}{Theorem}
 
-%\bibliographystyle{ieeetr}
+\bibliographystyle{ieeetr}
 
 \title{Randomized SVD}
 \author{Brady Metherall}
@@ -38,7 +40,46 @@
 \begin{document}
 \maketitle
 
-\begin{figure}[htbp]
+
+\begin{theorem}
+\label{thm:symm}
+If $AB^T$ and $B^TA$ are both symmetric matrices, then and only then can two orthogonal matrices $U$ and $V$ be found such that $\Sigma_A = U^T A V$, and $\Sigma_B = U^T B V$ are both diagonal matrices.
+\end{theorem}
+\begin{proof}
+This follows from the spectral theorem ***cite.
+\end{proof}
+
+\begin{theorem}
+The best (in the Frobenius norm) rank-$r$ approximation to a matrix, $A$, is obtained by the truncated SVD, $A_r$.
+\end{theorem}
+\begin{proof}
+The following proof has been adapted from~\cite{eckart}. The best approximation can be found by
+\begin{align}
+M = \underset{X \in \bowtie_r}{\argmin} \| A - X \|_F^2,
+\end{align}
+where $\bowtie_r$ is the set of all rank-$r$ $m \times n$ matrices. The minimum error is then
+\begin{align}
+\label{eq:err}
+\| A - M \|_F^2 &= \left< A, A \right> - 2 \left< A, M \right> + \left< M, M \right>, \\
+&= \left< A, A \right> - 2 \left< A, U \Sigma_M V^T \right> \\
+\nonumber & \hspace{3cm} + \left< \Sigma_M, \Sigma_M \right>.
+\end{align}
+At the minimum, the change in $\| A - X \|_F^2$ is zero for some change in $X$. This change in $X$ can be encapsulated as $U \mapsto sU$ where $s$ is infinitesimal and antisymmetric to maintain orthogonality. Thus, at the minimum
+\begin{align}
+0 = \left< A, s M \right> = \left< A M^T, s \right>.
+\end{align}
+Therefore, it is the case that $A M^T$ is symmetric. By following a similar procedure, we find that $M^T A$ must be symmetric as well.
+
+By Theorem \ref{thm:symm} $A$ and $M$ exhibit the same $U$ and $V$ in their SVDs. Now \eqref{eq:err} can be simplified to
+\begin{align}
+\| A - M \|_F^2 &= \| \Sigma_A - \Sigma_M \|_F^2, \\
+&= \sum_{i=1}^n \left( \sigma_i(A) - \sigma_i(M) \right)^2, \\
+&= \sum_{i = r+1}^n \sigma_i(A)^2.
+\end{align}
+This minimum is indeed achieved by the truncated SVD, since $\sigma_i(A_r) = \sigma_i(A) H(r - i)$.
+\end{proof}
+
+\begin{figure*}
 \centering
 \begin{subfigure}{0.5\textwidth}
 \centering
@@ -47,9 +88,9 @@ set grid
 #set format x '%.1f'
 set format y '%.1f'
 
-set ytics 0.4
+set ytics 1,0.4
 
-set yr [1:]
+set yr [1:2.2]
 set xr [10:240]
 
 set key width -2
@@ -58,11 +99,12 @@ set key top left
 set xl '$r$'
 set yl 'Error'
 
-p 'FullRankNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+p 'FullRankBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
 '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
 '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
 \end{gnuplot}
-\caption{Full Rank}
+\caption{Full rank matrices.}
+\label{fig:fullrank}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
 \centering
@@ -82,12 +124,40 @@ set key top left
 set xl '$r$'
 set yl 'Error'
 
-p 'PartRankNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+p 'PartRankBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3/10) w l lc 1 lw 0.3 not, '' u 1:($2 - $3/10) w l lc 1 lw 0.3 not, \
+'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5/10) w l lc 2 lw 0.3 not, '' u 1:($4 - $5/10) w l lc 2 lw 0.3 not, \
+'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7/10) w l lc 7 lw 0.3 not, '' u 1:($6 - $7/10) w l lc 7 lw 0.3 not
+\end{gnuplot}
+\caption{Rank-$r$ matrices.}
+\label{fig:rankr}
+\end{subfigure} \\
+\begin{subfigure}{0.5\textwidth}
+\centering
+\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+set grid
+#set format x '%.1f'
+set format y '%.1f'
+
+set ytics 0.5
+
+set yr [1:]
+set xr [10:240]
+
+set key vertical maxrows 2
+set key width -5
+set key bottom
+
+set xl '$r$'
+set yl 'Error'
+
+p -1 lc rgb 'white' t ' ', \
+'AlgBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
 '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
 '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
 \end{gnuplot}
-\caption{Part Rank}
-\end{subfigure} \\
+\caption{Algebraically decaying singular values.}
+\label{fig:algdecay}
+\end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
 \centering
 \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
@@ -106,38 +176,17 @@ set key top left
 set xl '$r$'
 set yl 'Error'
 
-p 'GeoNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
-'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
-'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+p 'GeoBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3/10) w l lc 1 lw 0.3 not, '' u 1:($2 - $3/10) w l lc 1 lw 0.3 not, \
+'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5/10) w l lc 2 lw 0.3 not, '' u 1:($4 - $5/10) w l lc 2 lw 0.3 not, \
+'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7/10) w l lc 7 lw 0.3 not, '' u 1:($6 - $7/10) w l lc 7 lw 0.3 not
 \end{gnuplot}
-\caption{Geo Rank}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-\centering
-\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
-set grid
-#set format x '%.1f'
-set format y '%.1f'
-
-set ytics 0.5
-
-set yr [1:]
-set xr [10:240]
-
-set key width -2
-set key bottom
-
-set xl '$r$'
-set yl 'Error'
-
-p 'AlgNorms.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
-'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
-'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
-\end{gnuplot}
-\caption{Alg Rank}
+\caption{Geometrically decaying singular values.}
+\label{fig:geodecay}
 \end{subfigure}
-\end{figure}
+\caption{Relative error of four types of matrix for the spectral, Frobenius, and trace norms. The thin lines represent the standard deviation in Figures \ref{fig:fullrank} and \ref{fig:algdecay}, and the standard error in Figures \ref{fig:rankr} and \ref{fig:geodecay} since the calculations are less numerically stable.}
+\label{fig:randsvd}
+\end{figure*}
 
-%\bibliography{Ref}
+\bibliography{Ref}
 
 \end{document}

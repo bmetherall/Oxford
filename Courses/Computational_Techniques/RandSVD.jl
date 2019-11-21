@@ -37,12 +37,12 @@ end
 	Q = Array(qr(A * Omega).Q)
 	C = svd(transpose(Q) * A)
 	U, V = Array(C.U), Array(C.Vt)
-	println(size(Q))
-	println(size(U))
+	#println(size(Q))
+	#println(size(U))
 	return (Q * U) * Diagonal(Array(C.S)) * V
 end
 
-@everywhere function TruncSVD(A, r::Int64) # Trucated SVD
+@everywhere function TruncSVD(A, r::Int64) # Truncated SVD
 	Fact = svd(A)
 	return Fact.U[:,1:r] * Diagonal(Fact.S[1:r]) * Fact.Vt[1:r,:]
 end
@@ -55,24 +55,24 @@ function Solve(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n 
 		println(i)
 		# Perform the decomposition N times to get average errors
 		@sync @distributed for j in 1:N # Parallel for loop
-			A = FullRank(m, n)
+			#A = FullRank(m, n)
 			#A = PartRank(m, n, i)
 			#A = GeoSig(m, n; coeff = 10, base = 0.9)
-			#A = AlgSig(m, n; coeff = 10, pow = 1.5)
-			
+			A = AlgSig(m, n; coeff = 10, pow = 1.5)
+
 			Arand = RandSVD(A, i, l)
 			Atrunc = TruncSVD(A, i)
-			
+
 			# 2 norm, F norm, trace norm
 			res[j,:] = [opnorm(A - Arand) / opnorm(A - Atrunc) norm(A - Arand) / norm(A - Atrunc) opnorm(A - Arand, 1) / opnorm(A - Atrunc, 1)]
 		end
 		# Compute means and standard deviations for the three norms
 		avg2 = mean(res[:,1])
-		sd2 = std(res[:,1]) / sqrt(N)
+		sd2 = std(res[:,1])
 		avgF = mean(res[:,2])
-		sdF = std(res[:,2]) / sqrt(N)
+		sdF = std(res[:,2])
 		avgT = mean(res[:,3])
-		sdT = std(res[:,3]) / sqrt(N)
+		sdT = std(res[:,3])
 		writedlm(f, [i avg2 sd2 avgF sdF avgT sdT])
     end
     close(f)
@@ -87,16 +87,11 @@ m = 500
 n = 250
 l = 5
 
-N = 144
+N = 10
 
 RandSVD(FullRank(m,n),50)
 
-#Solve(m, n, N, l; fname = "FullRankNorms.dat")
-#Solve(m, n, N, l; fname = "PartRankNorms.dat")
-#Solve(m, n, N, l; fname = "GeoNorms.dat")
-#Solve(m, n, N, l; fname = "AlgNorms.dat")
-
-
-
-
-
+#Solve(m, n, N, l; fname = "FullRankBig.dat")
+#Solve(m, n, N, l; fname = "PartRankBig.dat")
+#Solve(m, n, N, l; fname = "GeoBig.dat")
+Solve(m, n, N, l; fname = "Test.dat")
