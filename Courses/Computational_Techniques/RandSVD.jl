@@ -36,10 +36,11 @@ end
 	Omega = randn(n, r + l)
 	Q = Array(qr(A * Omega).Q)
 	C = svd(transpose(Q) * A)
-	U, V = Array(C.U), Array(C.Vt)
-	#println(size(Q))
-	#println(size(U))
-	return (Q * U) * Diagonal(Array(C.S)) * V
+	U, V = Array(C.U), Array(C.Vt) # Take leading parts
+	#println(size(Q * U))
+	#println(size(Diagonal(Array(C.S))))
+	#println(size(V))
+	return (Q * U)[:,1:r] * Diagonal(Array(C.S[1:r])) * V[1:r,:]
 end
 
 @everywhere function TruncSVD(A, r::Int64) # Truncated SVD
@@ -87,8 +88,9 @@ m = 500
 n = 250
 l = 5
 
-N = 10
+N = 1000
 
+RandSVD(FullRank(m,n),50)
 RandSVD(FullRank(m,n),50)
 
 #Solve(m, n, N, l; fname = "FullRankBig.dat")

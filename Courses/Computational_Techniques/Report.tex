@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,twocolumn]{article}
+\documentclass[11pt, a4paper, twocolumn]{article}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -11,6 +11,9 @@
 \usepackage{subcaption}
 %\usepackage{hyperref}
 %\usepackage{tikz}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 
 %\usepackage[table]{xcolor}
 %\rowcolors{2}{gray!25}{white}
@@ -39,6 +42,19 @@
 
 \begin{document}
 \maketitle
+
+\begin{algorithm}
+    \begin{algorithmic}
+        \State Input: Matrix $A$ of size $m \times n$, Int $r$, Int $l$.
+        \State Output: Matrix of size $m \times n$ of rank-$r$.
+        \State $\Omega \gets \mathcal{N}(0, 1)^{n \times (r + l)}$
+        \State $Q, \ \rule{2mm}{0.15mm} \gets qr(A \Omega)$
+        \State $U, \ \Sigma, \ V \gets svd(Q^T A)$ \\
+        \Return $(Q * U)[\text{:}, 1\text{:}r] * \Sigma[1 \text{:} r, 1 \text{:} r] * V[1 \text{:} r,\text{:}]$
+    \end{algorithmic}
+    \caption{Randomized SVD.}
+    \label{alg:randsvd}
+\end{algorithm}
 
 
 \begin{theorem}
