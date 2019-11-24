@@ -57,10 +57,10 @@ function Solve(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n 
 			#A = PartRank(m, n, i)
 			#A = GeoSig(m, n; coeff = 10, base = 0.9)
 			A = AlgSig(m, n; coeff = 10, pow = 1.5)
-
+			
 			Arand = RandSVD(A, i, l)
 			Atrunc = TruncSVD(A, i)
-
+			
 			# 2 norm, F norm, trace norm
 			res[j,:] = [opnorm(A - Arand) / opnorm(A - Atrunc) norm(A - Arand) / norm(A - Atrunc) opnorm(A - Arand, 1) / opnorm(A - Atrunc, 1)]
 		end
@@ -78,17 +78,17 @@ end
 
 # Main function to compute errors for rankr
 function SolveR(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n - l; fname = "RankConverge.dat")
-    f = open(fname, "w");
+	f = open(fname, "w");
 	for i in 1:rmax # Loop over ranks
 		res = SharedArray{Float64, 2}((N, 6)) # Results array (shared between all workers)
 		println(i)
 		# Perform the decomposition N times to get average errors
 		@sync @distributed for j in 1:N # Parallel for loop
 			A = PartRank(m, n, i)
-
+			
 			Arand = RandSVD(A, i, l)
 			Atrunc = TruncSVD(A, i)
-
+			
 			# 2 norm, F norm, trace norm
 			res[j,:] = [opnorm(A - Arand) opnorm(A - Atrunc) norm(A - Arand) norm(A - Atrunc) opnorm(A - Arand, 1) opnorm(A - Atrunc, 1)]
 		end
@@ -100,8 +100,8 @@ function SolveR(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n
 		avgT = mean(res[:,5])
 		avgtruncT = mean(res[:,6])
 		writedlm(f, [i avg2 avgtrunc2 avgF avgtruncF avgT avgtruncT])
-    end
-    close(f)
+	end
+	close(f)
 end
 
 # Compile
