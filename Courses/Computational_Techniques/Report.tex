@@ -14,6 +14,7 @@
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{algorithm}
+\usepackage{url}
 
 %\usepackage[table]{xcolor}
 %\rowcolors{2}{gray!25}{white}
@@ -23,6 +24,8 @@
 \renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
 \renewcommand{\right}{\aftergroup\egroup\originalright}
 
+\providecommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}\mathcal{O}\mathopen{}\left(#1\right)}}
+
 \DeclareMathOperator{\argmin}{arg\,min}
 
 \newcommand{\diff}[3][]{\frac{d^{#1}#2}{d{#3}^{#1}}}
@@ -30,6 +33,7 @@
 \newcommand{\df}{\, \textrm{d}}
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{remark}{Remark}
 
 \bibliographystyle{ieeetr}
 
@@ -40,168 +44,222 @@
 \newgeometry{margin=2cm}
 %\setlength\parindent{0pt}
 
+%\renewcommand{\floatpagefraction}{1}
+
 \begin{document}
 \maketitle
 
-\begin{algorithm}
-    \begin{algorithmic}
+
+
+\section{Introduction}
+
+singular value decomposition (SVD)
+
+-svd good
+
+-svd slow
+
+-compression
+
+-signposting
+
+\section{Truncated SVD}
+Often times the SVD sheds light on the underlying properties of its corresponding matrix. For example if several of the singular values are very small we may omit these to further compress the matrix. Such a process is called the truncated SVD where only the $r$ largest singular values are kept and the rest are discarded along with the associated columns of $U$ and $V$. This provides us with a rank-$r$ approximation to the original matrix. In fact, truncated SVD yields the best rank-$r$ approximation, this can be proved by the following two theorems.
+\begin{theorem}
+    If $AB^T$ and $B^TA$ are both symmetric matrices, then and only then can two orthogonal matrices $U$ and $V$ be found such that $\Sigma_A = U^T A V$, and $\Sigma_B = U^T B V$ are both diagonal matrices.
+    \label{thm:symm}
+\end{theorem}
+\begin{proof}
+    The proof follows from the spectral theorem \cite{axler}.
+\end{proof}
+\begin{theorem}[Eckart--Young Theorem]
+    The best (in the Frobenius norm) rank-$r$ approximation to a matrix, $A$, is obtained by the truncated SVD, $A_r$.
+    \label{thm:frob}
+\end{theorem}
+\begin{proof}
+    The following proof has been adapted from~\cite{eckart}. The best approximation can be found by
+    \begin{align}
+        M = \underset{X \in \bowtie_r}{\argmin} \| A - X \|_F^2,
+    \end{align}
+    where $\bowtie_r$ is the set of all rank-$r$ $m \times n$ matrices. The minimum error is then
+    \begin{align}
+        \label{eq:err}
+        \| A - M \|_F^2 &= \left< A, A \right> - 2 \left< A, M \right> + \left< M, M \right>, \\
+        &= \left< A, A \right> - 2 \left< A, U \Sigma_M V^T \right> \\
+        \nonumber & \hspace{3cm} + \left< \Sigma_M, \Sigma_M \right>.
+    \end{align}
+    At the minimum, the change in $\| A - X \|_F^2$ is zero for some change in $X$. This change in $X$ can be encapsulated as $U \mapsto sU$ where $s$ is infinitesimal and antisymmetric to maintain orthogonality. Thus, at the minimum
+    \begin{align}
+        0 = \left< A, s M \right> = \left< A M^T, s \right>.
+    \end{align}
+    Therefore, it is the case that $A M^T$ is symmetric. By following a similar procedure, we find that $M^T A$ must be symmetric as well.
+
+    By Theorem \ref{thm:symm} $A$ and $M$ exhibit the same $U$ and $V$ in their SVDs. Now \eqref{eq:err} can be simplified to
+    \begin{align}
+        \| A - M \|_F^2 &= \| \Sigma_A - \Sigma_M \|_F^2, \\
+        &= \sum_{i=1}^n \left( \sigma_i(A) - \sigma_i(M) \right)^2, \\
+        &= \sum_{i = r+1}^n \sigma_i(A)^2.
+    \end{align}
+    This minimum is indeed achieved by the truncated SVD, since $\sigma_i(A_r) = \sigma_i(A) H(r - i)$.
+\end{proof}
+\noindent Additionally, the analysis in Section \ref{sec:randsvd} will be dependent on:
+\begin{remark}
+    Theorem \ref{thm:frob} was extended to all unitarily invariant norms in 1960 by Mirsky \cite{mirsky}.
+    \label{thm:unitary}
+\end{remark}
+
+Although, truncated SVD can provide a more compressed version of a matrix, it can be rather expensive to compute as the full SVD needs to be computed. To find a similar decomposition in faster time we turn our attention to the randomized SVD.
+
+\section{Randomized SVD}
+\label{sec:randsvd}
+Randomized SVD attempts to obtain an approximation to the truncated SVD in a fraction of the time at the expensive of the accuracy. We shall investigate the expected value of the relative error for a variety of matrices. If the relative error is $\bigO{1}$ then the randomized SVD would be much more effective than truncated SVD because of the reduced time.
+
+\begin{algorithm}[tbp]
+    \begin{algorithmic}[1]
         \State Input: Matrix $A$ of size $m \times n$, Int $r$, Int $l$.
         \State Output: Matrix of size $m \times n$ of rank-$r$.
-        \State $\Omega \gets \mathcal{N}(0, 1)^{n \times (r + l)}$
-        \State $Q, \ \rule{2mm}{0.15mm} \gets qr(A \Omega)$
-        \State $U, \ \Sigma, \ V \gets svd(Q^T A)$ \\
+        \State \hspace{\algorithmicindent} $\Omega \gets \mathcal{N}(0, 1)^{n \times (r + l)}$ \label{alg:omega}
+        \State \hspace{\algorithmicindent} $Q, \ \rule{2mm}{0.15mm} \gets qr(A * \Omega)$ \label{alg:qr}
+        \State \hspace{\algorithmicindent} $U, \ \Sigma, \ V \gets svd(Q^T * A)$ \\ \label{alg:svd}
         \Return $(Q * U)[\text{:}, 1\text{:}r] * \Sigma[1 \text{:} r, 1 \text{:} r] * V[1 \text{:} r,\text{:}]$
     \end{algorithmic}
     \caption{Randomized SVD.}
     \label{alg:randsvd}
 \end{algorithm}
 
+We find the randomized SVD using the method outlined in Algorithm \ref{alg:randsvd}. Effectively, our matrix, $A \in \mathbb{R}^{m \times n}$, is first multiplied by a random matrix of rank-$(r + l)$, where $r$ is the rank we wish to approximate, and $l$ is the buffer size. This extracts $r + l$ random directions of $A$, we then take the QR decomposition of this product to orthonormalize the projections. Finally, we compute the thin SVD on this much smaller matrix.
 
-\begin{theorem}
-\label{thm:symm}
-If $AB^T$ and $B^TA$ are both symmetric matrices, then and only then can two orthogonal matrices $U$ and $V$ be found such that $\Sigma_A = U^T A V$, and $\Sigma_B = U^T B V$ are both diagonal matrices.
-\end{theorem}
-\begin{proof}
-This follows from the spectral theorem ***cite.
-\end{proof}
-
-\begin{theorem}
-The best (in the Frobenius norm) rank-$r$ approximation to a matrix, $A$, is obtained by the truncated SVD, $A_r$.
-\end{theorem}
-\begin{proof}
-The following proof has been adapted from~\cite{eckart}. The best approximation can be found by
-\begin{align}
-M = \underset{X \in \bowtie_r}{\argmin} \| A - X \|_F^2,
-\end{align}
-where $\bowtie_r$ is the set of all rank-$r$ $m \times n$ matrices. The minimum error is then
-\begin{align}
-\label{eq:err}
-\| A - M \|_F^2 &= \left< A, A \right> - 2 \left< A, M \right> + \left< M, M \right>, \\
-&= \left< A, A \right> - 2 \left< A, U \Sigma_M V^T \right> \\
-\nonumber & \hspace{3cm} + \left< \Sigma_M, \Sigma_M \right>.
-\end{align}
-At the minimum, the change in $\| A - X \|_F^2$ is zero for some change in $X$. This change in $X$ can be encapsulated as $U \mapsto sU$ where $s$ is infinitesimal and antisymmetric to maintain orthogonality. Thus, at the minimum
-\begin{align}
-0 = \left< A, s M \right> = \left< A M^T, s \right>.
-\end{align}
-Therefore, it is the case that $A M^T$ is symmetric. By following a similar procedure, we find that $M^T A$ must be symmetric as well.
-
-By Theorem \ref{thm:symm} $A$ and $M$ exhibit the same $U$ and $V$ in their SVDs. Now \eqref{eq:err} can be simplified to
-\begin{align}
-\| A - M \|_F^2 &= \| \Sigma_A - \Sigma_M \|_F^2, \\
-&= \sum_{i=1}^n \left( \sigma_i(A) - \sigma_i(M) \right)^2, \\
-&= \sum_{i = r+1}^n \sigma_i(A)^2.
-\end{align}
-This minimum is indeed achieved by the truncated SVD, since $\sigma_i(A_r) = \sigma_i(A) H(r - i)$.
-\end{proof}
+To have a better understanding of the expected speed up of randomized over truncated SVD we proceed by finding the computational complexity. The complexity of Algorithm \ref{alg:randsvd} can be broken down as follows:
+\begin{itemize}
+    \item Line \ref{alg:omega} is $\bigO{n(r + l)}$ for creating the random matrix $\Omega$.
+    \item Line \ref{alg:qr} is $\bigO{mn(r + l)}$ for the product $A \Omega$ and $\bigO{m(r + l)^2}$ for the QR decomposition\footnote{As we shall see, Algorithm \ref{alg:randsvd} is implemented in Julia which calls the C Householder QR decomposition \cite{juliala}.}.
+    \item Line \ref{alg:svd} is $\bigO{n(r + l)^2}$ for the SVD.
+\end{itemize}
+Therefore, the process is bottlenecked by the QR decomposition, and will scale as $\bigO{mnr}$, as opposed to $\bigO{mn^2}$ as in truncated SVD which first calculates the full SVD. Thus, we would expect randomized SVD to be $\bigO{n / r}$ faster, which for a large, redundant matrix can be quite large.
 
 \begin{figure*}
-\centering
-\begin{subfigure}{0.5\textwidth}
-\centering
-\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
-set grid
-#set format x '%.1f'
-set format y '%.1f'
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+            set grid
+            #set format x '%.1f'
+            set format y '%.1f'
 
-set ytics 1,0.4
+            set ytics 1,0.4
 
-set yr [1:2.2]
-set xr [10:240]
+            set yr [1:2.2]
+            set xr [10:240]
 
-set key width -2
-set key top left
+            set key width -2
+            set key top left
 
-set xl '$r$'
-set yl 'Error'
+            set xl '$r$'
+            set yl 'Error'
 
-p 'FullRankBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
-'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
-'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
-\end{gnuplot}
-\caption{Full rank matrices.}
-\label{fig:fullrank}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-\centering
-\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
-set grid
-#set format x '%.1f'
-#set format y '%.1f'
+            p 'FullRankBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+            '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
+            '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+        \end{gnuplot}
+        \caption{Full rank matrices.}
+        \label{fig:fullrank}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \input{./gnuplottex/PartRankPlot}
+        % \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+        %         set grid
+        %         #set format x '%.1f'
+        %         #set format y '%.1f'
+        %         set format y '$10^{%01T}$'
+        %
+        %         set logscale y
+        %
+        %         set xr [10:240]
+        %
+        %         set key vertical maxrows 2
+        %         set key width -2.75
+        %         set key top left
+        %
+        %         set xl '$r$'
+        %         set yl 'Absolute Error'
+        %
+        %         p 'RankConverge.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:3 w l lc 1 dt 5 lw 0.3 not, \
+        %         '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:5 w l lc 2 lw 0.3 not, \
+        %         '' u 1:6 w l t 'Trace \quad' lc 7, '' u 1:7 w l lc 7 lw 0.3 not
+        % \end{gnuplot}
+        \caption{Rank-$r$ matrices.}
+        \label{fig:rankr}
+    \end{subfigure} \\
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+            set grid
+            #set format x '%.1f'
+            set format y '%.1f'
 
-set ytics 1
+            set ytics 0.5
 
-set yr [1:]
-set xr [10:240]
+            set yr [1:]
+            set xr [10:240]
 
-set key width -2
-set key top left
+            set key vertical maxrows 2
+            set key width -5
+            set key bottom
 
-set xl '$r$'
-set yl 'Error'
+            set xl '$r$'
+            set yl 'Error'
 
-p 'PartRankBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3/10) w l lc 1 lw 0.3 not, '' u 1:($2 - $3/10) w l lc 1 lw 0.3 not, \
-'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5/10) w l lc 2 lw 0.3 not, '' u 1:($4 - $5/10) w l lc 2 lw 0.3 not, \
-'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7/10) w l lc 7 lw 0.3 not, '' u 1:($6 - $7/10) w l lc 7 lw 0.3 not
-\end{gnuplot}
-\caption{Rank-$r$ matrices.}
-\label{fig:rankr}
-\end{subfigure} \\
-\begin{subfigure}{0.5\textwidth}
-\centering
-\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
-set grid
-#set format x '%.1f'
-set format y '%.1f'
+            p -1 lc rgb 'white' t ' ', \
+            'AlgBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
+            '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
+            '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
+        \end{gnuplot}
+        \caption{Algebraically decaying singular values \\ $(\sigma_i = 10 \times i^{-1.5})$.}
+        \label{fig:algdecay}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
+            set grid
+            #set format x '%.1f'
+            #set format y '%.2f'
 
-set ytics 0.5
+            set ytics 1, 2
 
-set yr [1:]
-set xr [10:240]
+            set yr [1:7]
+            set xr [10:240]
 
-set key vertical maxrows 2
-set key width -5
-set key bottom
+            set key width -2
+            set key top left
 
-set xl '$r$'
-set yl 'Error'
+            set xl '$r$'
+            set yl 'Error'
 
-p -1 lc rgb 'white' t ' ', \
-'AlgBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3) w l lc 1 lw 0.3 not, '' u 1:($2 - $3) w l lc 1 lw 0.3 not, \
-'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
-'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
-\end{gnuplot}
-\caption{Algebraically decaying singular values.}
-\label{fig:algdecay}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-\centering
-\begin{gnuplot}[terminal=epslatex, terminaloptions={color size 3.25in,2in lw 3}]
-set grid
-#set format x '%.1f'
-#set format y '%.2f'
-
-set ytics 1, 2
-
-set yr [1:7]
-set xr [10:240]
-
-set key width -2
-set key top left
-
-set xl '$r$'
-set yl 'Error'
-
-p 'GeoBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3/10) w l lc 1 lw 0.3 not, '' u 1:($2 - $3/10) w l lc 1 lw 0.3 not, \
-'' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5/10) w l lc 2 lw 0.3 not, '' u 1:($4 - $5/10) w l lc 2 lw 0.3 not, \
-'' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7/10) w l lc 7 lw 0.3 not, '' u 1:($6 - $7/10) w l lc 7 lw 0.3 not
-\end{gnuplot}
-\caption{Geometrically decaying singular values.}
-\label{fig:geodecay}
-\end{subfigure}
-\caption{Relative error of four types of matrix for the spectral, Frobenius, and trace norms. The thin lines represent the standard deviation in Figures \ref{fig:fullrank} and \ref{fig:algdecay}, and the standard error in Figures \ref{fig:rankr} and \ref{fig:geodecay} since the calculations are less numerically stable.}
-\label{fig:randsvd}
+            p 'GeoBig.dat' u 1:2 w l lc 1 t 'Spectral', '' u 1:($2+$3/10) w l lc 1 lw 0.3 not, '' u 1:($2 - $3/10) w l lc 1 lw 0.3 not, \
+            '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5/10) w l lc 2 lw 0.3 not, '' u 1:($4 - $5/10) w l lc 2 lw 0.3 not, \
+            '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7/10) w l lc 7 lw 0.3 not, '' u 1:($6 - $7/10) w l lc 7 lw 0.3 not
+        \end{gnuplot}
+        \caption{Geometrically decaying singular values \\ $(\sigma_i = 10 \times 0.9^{1-i})$.}
+        \label{fig:geodecay}
+    \end{subfigure}
+    \caption{Relative error of four types of matrix for the spectral, Frobenius, and trace norms. The thin lines represent the standard deviation in Figures \ref{fig:fullrank} and \ref{fig:algdecay}, the standard error in Figure \ref{fig:geodecay} since the singular values decay quickly, and the error of the truncated SVD in Figure \ref{fig:rankr} since the division becomes numerically unstable. The parameters of the computations were $m = 500$, $n = 250$, $l = 5$, and $N = 10^3$.}
+    \label{fig:randsvd}
 \end{figure*}
+
+We implement Algorithm \ref{alg:randsvd} in Julia\footnote{The code can be found at \url{github.com/bmetherall/Oxford/blob/master/Courses/Computational_Techniques/RandSVD.jl}.}, and compare the relative error in the spectral, Frobenius, and trace norms for matrices of full rank, rank-$r$, algebraically decaying singular values, and geometrically decaying singular values\footnote{In the case of rank-$r$ matrices we compare the absolute error instead since the approximation should be exact.}. The results of the computations can be seen in Figure \ref{fig:randsvd}.
+
+We can see from Figure \ref{fig:fullrank} that the relative error monotonically increases for all three norms---however, once $r + l$ approaches $n$ the relative error quickly approaches one as the approximation becomes exact. Furthermore, even for a somewhat sizeable matrix the error is indeed $\bigO{1}$, and the standard deviation quite small. We find very different behaviour for rank-$r$ matrices (Figure \ref{fig:rankr}). In this case we are approximating a rank-$r$ matrix with a rank-$r$ matrix, and so we expect to---mathematically---have a zero error. Of course computationally we are unlikely to obtain zero, and instead we find errors of $\bigO{10^{-11}}$. Randomized SVD performs considerably worse here (relatively) than with a full rank matrix, but, we are still able to approximate the matrix almost exactly.
+
+
+-accuracy (good for full rank and algebraic decay. unstable for rank r since equal, unstable for geo since decays very quick)
+
+-bounded above by an order of magnitude, pretty good much quicker
+
+
+
+
+\section{Conclusion}
 
 \bibliography{Ref}
 
