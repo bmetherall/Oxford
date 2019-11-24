@@ -15,6 +15,7 @@
 \usepackage{algpseudocode}
 \usepackage{algorithm}
 \usepackage{url}
+\usepackage{dblfloatfix}
 
 %\usepackage[table]{xcolor}
 %\rowcolors{2}{gray!25}{white}
@@ -37,34 +38,22 @@
 
 \bibliographystyle{ieeetr}
 
-\title{Randomized SVD}
+\title{Effectiveness of the Randomized SVD}
 \author{Brady Metherall}
 \date{25 November 2019}
 
 \newgeometry{margin=2cm}
 %\setlength\parindent{0pt}
 
-%\renewcommand{\floatpagefraction}{1}
-
 \begin{document}
 \maketitle
 
-
-
 \section{Introduction}
-
-singular value decomposition (SVD)
-
--svd good
-
--svd slow
-
--compression
-
--signposting
+The singular value decomposition (SVD) factors a matrix into a unitary matrix, $U$, a non-negative diagonal matrix, $\Sigma$, and another unitary matrix, $V^T$. The elements of $\Sigma$ are ordered in decreasing order and are called the singular values. In Section \ref{sec:trunc} we investigate how a matrix can be approximated---and compressed---by the truncated SVD, then in Section \ref{sec:randsvd} we explore a much faster method of approximating a matrix and show that this produces a similar error as truncated SVD. Finally, in Section \ref{sec:conc} we give our closing remarks.
 
 \section{Truncated SVD}
-Often times the SVD sheds light on the underlying properties of its corresponding matrix. For example if several of the singular values are very small we may omit these to further compress the matrix. Such a process is called the truncated SVD where only the $r$ largest singular values are kept and the rest are discarded along with the associated columns of $U$ and $V$. This provides us with a rank-$r$ approximation to the original matrix. In fact, truncated SVD yields the best rank-$r$ approximation, this can be proved by the following two theorems.
+\label{sec:trunc}
+Often times the SVD sheds light on the underlying properties of its corresponding matrix, in a similar way as principle component analysis (PCA). For example, if several of the singular values are very small we may omit these to compress the matrix. Such a process is called the truncated SVD where only the $r$ largest singular values are kept and the rest are discarded along with the associated columns of $U$ and $V$. This provides us with a rank-$r$ approximation to the original matrix. If $r$ is less than the reduced mass of $m$ and $n$, the truncated SVD will provide a method of compression as the three matrices of SVD will require less memory than the full matrix. In fact, truncated SVD yields the best rank-$r$ approximation, this can be proved by the following two theorems.
 \begin{theorem}
     If $AB^T$ and $B^TA$ are both symmetric matrices, then and only then can two orthogonal matrices $U$ and $V$ be found such that $\Sigma_A = U^T A V$, and $\Sigma_B = U^T B V$ are both diagonal matrices.
     \label{thm:symm}
@@ -73,28 +62,28 @@ Often times the SVD sheds light on the underlying properties of its correspondin
     The proof follows from the spectral theorem \cite{axler}.
 \end{proof}
 \begin{theorem}[Eckart--Young Theorem]
-    The best (in the Frobenius norm) rank-$r$ approximation to a matrix, $A$, is obtained by the truncated SVD, $A_r$.
+    The best (in the Frobenius norm) rank-$r$ approximation to a matrix, $A$, is obtained by the truncated SVD,~$A_r$.
     \label{thm:frob}
 \end{theorem}
 \begin{proof}
-    The following proof has been adapted from~\cite{eckart}. The best approximation can be found by
+    The following proof has been adapted from~\cite{eckart}. The best approximation, $M$, can be found by
     \begin{align}
         M = \underset{X \in \bowtie_r}{\argmin} \| A - X \|_F^2,
     \end{align}
     where $\bowtie_r$ is the set of all rank-$r$ $m \times n$ matrices. The minimum error is then
     \begin{align}
         \label{eq:err}
-        \| A - M \|_F^2 &= \left< A, A \right> - 2 \left< A, M \right> + \left< M, M \right>, \\
-        &= \left< A, A \right> - 2 \left< A, U \Sigma_M V^T \right> \\
-        \nonumber & \hspace{3cm} + \left< \Sigma_M, \Sigma_M \right>.
+        \nonumber \| A - M \|_F^2 &= \left< A, A \right>_F - 2 \left< A, M \right>_F + \left< M, M \right>_F, \\
+        &= \left< A, A \right>_F - 2 \left< A, U \Sigma_M V^T \right>_F \\
+        \nonumber & \hspace{3cm} + \left< \Sigma_M, \Sigma_M \right>_F.
     \end{align}
     At the minimum, the change in $\| A - X \|_F^2$ is zero for some change in $X$. This change in $X$ can be encapsulated as $U \mapsto sU$ where $s$ is infinitesimal and antisymmetric to maintain orthogonality. Thus, at the minimum
     \begin{align}
-        0 = \left< A, s M \right> = \left< A M^T, s \right>.
+        0 = \left< A, s M \right>_F = \left< A M^T, s \right>_F.
     \end{align}
     Therefore, it is the case that $A M^T$ is symmetric. By following a similar procedure, we find that $M^T A$ must be symmetric as well.
 
-    By Theorem \ref{thm:symm} $A$ and $M$ exhibit the same $U$ and $V$ in their SVDs. Now \eqref{eq:err} can be simplified to
+    By Theorem \ref{thm:symm}, $A$ and $M$ exhibit the same $U$ and $V$ in their SVDs. Now the error can be simplified to
     \begin{align}
         \| A - M \|_F^2 &= \| \Sigma_A - \Sigma_M \|_F^2, \\
         &= \sum_{i=1}^n \left( \sigma_i(A) - \sigma_i(M) \right)^2, \\
@@ -108,36 +97,7 @@ Often times the SVD sheds light on the underlying properties of its correspondin
     \label{thm:unitary}
 \end{remark}
 
-Although, truncated SVD can provide a more compressed version of a matrix, it can be rather expensive to compute as the full SVD needs to be computed. To find a similar decomposition in faster time we turn our attention to the randomized SVD.
-
-\section{Randomized SVD}
-\label{sec:randsvd}
-Randomized SVD attempts to obtain an approximation to the truncated SVD in a fraction of the time at the expensive of the accuracy. We shall investigate the expected value of the relative error for a variety of matrices. If the relative error is $\bigO{1}$ then the randomized SVD would be much more effective than truncated SVD because of the reduced time.
-
-\begin{algorithm}[tbp]
-    \begin{algorithmic}[1]
-        \State Input: Matrix $A$ of size $m \times n$, Int $r$, Int $l$.
-        \State Output: Matrix of size $m \times n$ of rank-$r$.
-        \State \hspace{\algorithmicindent} $\Omega \gets \mathcal{N}(0, 1)^{n \times (r + l)}$ \label{alg:omega}
-        \State \hspace{\algorithmicindent} $Q, \ \rule{2mm}{0.15mm} \gets qr(A * \Omega)$ \label{alg:qr}
-        \State \hspace{\algorithmicindent} $U, \ \Sigma, \ V \gets svd(Q^T * A)$ \\ \label{alg:svd}
-        \Return $(Q * U)[\text{:}, 1\text{:}r] * \Sigma[1 \text{:} r, 1 \text{:} r] * V[1 \text{:} r,\text{:}]$
-    \end{algorithmic}
-    \caption{Randomized SVD.}
-    \label{alg:randsvd}
-\end{algorithm}
-
-We find the randomized SVD using the method outlined in Algorithm \ref{alg:randsvd}. Effectively, our matrix, $A \in \mathbb{R}^{m \times n}$, is first multiplied by a random matrix of rank-$(r + l)$, where $r$ is the rank we wish to approximate, and $l$ is the buffer size. This extracts $r + l$ random directions of $A$, we then take the QR decomposition of this product to orthonormalize the projections. Finally, we compute the thin SVD on this much smaller matrix.
-
-To have a better understanding of the expected speed up of randomized over truncated SVD we proceed by finding the computational complexity. The complexity of Algorithm \ref{alg:randsvd} can be broken down as follows:
-\begin{itemize}
-    \item Line \ref{alg:omega} is $\bigO{n(r + l)}$ for creating the random matrix $\Omega$.
-    \item Line \ref{alg:qr} is $\bigO{mn(r + l)}$ for the product $A \Omega$ and $\bigO{m(r + l)^2}$ for the QR decomposition\footnote{As we shall see, Algorithm \ref{alg:randsvd} is implemented in Julia which calls the C Householder QR decomposition \cite{juliala}.}.
-    \item Line \ref{alg:svd} is $\bigO{n(r + l)^2}$ for the SVD.
-\end{itemize}
-Therefore, the process is bottlenecked by the QR decomposition, and will scale as $\bigO{mnr}$, as opposed to $\bigO{mn^2}$ as in truncated SVD which first calculates the full SVD. Thus, we would expect randomized SVD to be $\bigO{n / r}$ faster, which for a large, redundant matrix can be quite large.
-
-\begin{figure*}
+\begin{figure*}[b]
     \centering
     \begin{subfigure}{0.5\textwidth}
         \centering
@@ -161,7 +121,7 @@ Therefore, the process is bottlenecked by the QR decomposition, and will scale a
             '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5) w l lc 2 lw 0.3 not, '' u 1:($4 - $5) w l lc 2 lw 0.3 not, \
             '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7) w l lc 7 lw 0.3 not, '' u 1:($6 - $7) w l lc 7 lw 0.3 not
         \end{gnuplot}
-        \caption{Full rank matrices.}
+        \caption{Full rank.}
         \label{fig:fullrank}
     \end{subfigure}%
     \begin{subfigure}{0.5\textwidth}
@@ -188,7 +148,7 @@ Therefore, the process is bottlenecked by the QR decomposition, and will scale a
         %         '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:5 w l lc 2 lw 0.3 not, \
         %         '' u 1:6 w l t 'Trace \quad' lc 7, '' u 1:7 w l lc 7 lw 0.3 not
         % \end{gnuplot}
-        \caption{Rank-$r$ matrices.}
+        \caption{Rank-$r$.}
         \label{fig:rankr}
     \end{subfigure} \\
     \begin{subfigure}{0.5\textwidth}
@@ -240,26 +200,50 @@ Therefore, the process is bottlenecked by the QR decomposition, and will scale a
             '' u 1:4 w l t 'Frobenius' lc 2, '' u 1:($4+$5/10) w l lc 2 lw 0.3 not, '' u 1:($4 - $5/10) w l lc 2 lw 0.3 not, \
             '' u 1:6 w l t 'Trace' lc 7, '' u 1:($6+$7/10) w l lc 7 lw 0.3 not, '' u 1:($6 - $7/10) w l lc 7 lw 0.3 not
         \end{gnuplot}
-        \caption{Geometrically decaying singular values \\ $(\sigma_i = 10 \times 0.9^{1-i})$.}
+        \caption{Geometrically decaying singular values \\ $(\sigma_i = 10 \times 0.9^{i-1})$.}
         \label{fig:geodecay}
     \end{subfigure}
-    \caption{Relative error of four types of matrix for the spectral, Frobenius, and trace norms. The thin lines represent the standard deviation in Figures \ref{fig:fullrank} and \ref{fig:algdecay}, the standard error in Figure \ref{fig:geodecay} since the singular values decay quickly, and the error of the truncated SVD in Figure \ref{fig:rankr} since the division becomes numerically unstable. The parameters of the computations were $m = 500$, $n = 250$, $l = 5$, and $N = 10^3$.}
+    \caption{Relative error of four types of matrix for the spectral, Frobenius, and trace norms. The thin lines represent the standard deviation in Figures \ref{fig:fullrank} and \ref{fig:algdecay}, the standard error in Figure \ref{fig:geodecay}, and the error of the truncated SVD in Figure \ref{fig:rankr}. The parameters of the computations were $m = 500$, $n = 250$, $l = 5$, and $N = 10^3$.}
     \label{fig:randsvd}
+    %\vspace{-1.3cm}
 \end{figure*}
+
+Although truncated SVD can provide a more compressed version of a matrix, it can be rather expensive to compute as the full SVD is required. To find a similar decomposition in faster time we turn our attention to the randomized SVD.
+
+\section{Randomized SVD}
+\label{sec:randsvd}
+Randomized SVD attempts to obtain an approximation to the truncated SVD in a fraction of the time at the expensive of the accuracy. We shall investigate the expected value of the relative error for a variety of matrices. If the relative error is $\bigO{1}$ then the randomized SVD would be much more effective than truncated SVD because of the reduced computation time.
+
+\begin{algorithm}[tbp]
+    \begin{algorithmic}[1]
+        \State Input: Matrix $A$ of size $m \times n$, Int $r$, Int $l$.
+        \State Output: Matrix of size $m \times n$ of rank-$r$.
+        \State \hspace{\algorithmicindent} $\Omega \gets \mathcal{N}(0, 1)^{n \times (r + l)}$ \label{alg:omega}
+        \State \hspace{\algorithmicindent} $Q, \ \rule{2mm}{0.15mm} \gets qr(A * \Omega)$ \label{alg:qr}
+        \State \hspace{\algorithmicindent} $U, \ \Sigma, \ V \gets svd(Q^T * A)$ \label{alg:svd} \\
+        \Return $(Q * U)[\text{:}, 1\text{:}r] * \Sigma[1 \text{:} r, 1 \text{:} r] * V[1 \text{:} r,\text{:}]$
+    \end{algorithmic}
+    \caption{Randomized SVD.}
+    \label{alg:randsvd}
+\end{algorithm}
+
+The randomized SVD is found using the method outlined in Algorithm \ref{alg:randsvd}. Effectively, our matrix, $A \in \mathbb{R}^{m \times n}$, is first multiplied by a random matrix of rank-$(r + l)$, where $r$ is the rank we wish to approximate, and $l$ is the buffer size. This extracts $r + l$ random directions of $A$, we then take the QR decomposition of this product to orthonormalize the projections. Finally, we compute the thin SVD on this much smaller matrix.
+
+To have a better understanding of the expected speed up of randomized over truncated SVD we proceed by finding the computational complexity. The complexity of Algorithm \ref{alg:randsvd} can be broken down as follows:
+\begin{itemize}
+    \item Line \ref{alg:omega} is $\bigO{n(r + l)}$ for creating the random matrix $\Omega$.
+    \item Line \ref{alg:qr} is $\bigO{mn(r + l)}$ for the product $A \Omega$ and $\bigO{m(r + l)^2}$ for the QR decomposition\footnote{As we shall see, Algorithm \ref{alg:randsvd} is implemented in Julia which calls the C Householder QR decomposition \cite{juliala}.}.
+    \item Line \ref{alg:svd} is $\bigO{n(r + l)^2}$ for the SVD.
+\end{itemize}
+Therefore, the process is bottlenecked by the QR decomposition, and will scale as $\bigO{mnr}$, as opposed to $\bigO{mn^2}$ as in truncated SVD which first calculates the full SVD. Thus, we would expect randomized SVD to be $\bigO{n / r}$ faster, which for a large, redundant matrix can be quite advantageous.
 
 We implement Algorithm \ref{alg:randsvd} in Julia\footnote{The code can be found at \url{github.com/bmetherall/Oxford/blob/master/Courses/Computational_Techniques/RandSVD.jl}.}, and compare the relative error in the spectral, Frobenius, and trace norms for matrices of full rank, rank-$r$, algebraically decaying singular values, and geometrically decaying singular values\footnote{In the case of rank-$r$ matrices we compare the absolute error instead since the approximation should be exact.}. The results of the computations can be seen in Figure \ref{fig:randsvd}.
 
-We can see from Figure \ref{fig:fullrank} that the relative error monotonically increases for all three norms---however, once $r + l$ approaches $n$ the relative error quickly approaches one as the approximation becomes exact. Furthermore, even for a somewhat sizeable matrix the error is indeed $\bigO{1}$, and the standard deviation quite small. We find very different behaviour for rank-$r$ matrices (Figure \ref{fig:rankr}). In this case we are approximating a rank-$r$ matrix with a rank-$r$ matrix, and so we expect to---mathematically---have a zero error. Of course computationally we are unlikely to obtain zero, and instead we find errors of $\bigO{10^{-11}}$. Randomized SVD performs considerably worse here (relatively) than with a full rank matrix, but, we are still able to approximate the matrix almost exactly.
-
-
--accuracy (good for full rank and algebraic decay. unstable for rank r since equal, unstable for geo since decays very quick)
-
--bounded above by an order of magnitude, pretty good much quicker
-
-
-
+We can see from Figure \ref{fig:fullrank} that the relative error monotonically increases for all three norms---however, once $r + l$ approaches $n$ the relative error quickly approaches one as the approximation becomes exact. Furthermore, even for a somewhat sizeable matrix the error is indeed $\bigO{1}$, and the standard deviation quite small. We find very different behaviour for rank-$r$ matrices (Figure \ref{fig:rankr}). In this case we are approximating a rank-$r$ matrix with a rank-$r$ matrix, and so we expect to---mathematically---have a zero error. Of course computationally we are unlikely to obtain zero, and instead we find errors of $\bigO{10^{-11}}$. Randomized SVD performs considerably worse here (relatively) than truncated SVD, but, we are still able to approximate the matrix almost exactly. For matrices whose singular values decay algebraically (Figure \ref{fig:algdecay}) we again find a different relation. The relative error quickly plateaus around three for the spectral norm, and two for the Frobenius and Trace norms. Since the singular values in this case decay slowly they carry a similar weight as their neighbours. Hence, the error is fairly constant for reasonably sized values of $r$. Finally, matrices with singular values that decay geometrically (Figure \ref{fig:geodecay}) display similar behaviour as full rank matrices, but, with a negative concavity. As the singular values decay exponentially, the first few are exceedingly important. As $r$ increases the chance of finding these initial singular values also increases, and so, the error begins to level off.
 
 \section{Conclusion}
+\label{sec:conc}
+SVD has many applications in statistics and data science for analysis and compression. However, the SVD and truncated SVD can become quite expensive to compute for large matrices. Randomized SVD helps alleviate this problem as we saw in Section \ref{sec:randsvd}. The key observation in the case of all four types of matrices is that the relative error for each norm is $\bigO{1}$. This is very promising---for example, suppose we wish to approximate a full rank $500 \times 250$ matrix by a rank-100 matrix. Randomized SVD yields a matrix with an expected relative error less than 1.4, but, it can be computed approximately $2.5 \times$ faster. For very large matrices with relatively low rank, as is common in data science, randomized SVD is much more effective than standard SVD.
 
 \bibliography{Ref}
 

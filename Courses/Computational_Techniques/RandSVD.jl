@@ -18,7 +18,7 @@ end
 	# Create two orthogonal matrices from QR of random matrices
 	Q1 = Array(qr(randn(m, n)).Q)
 	Q2 = Array(qr(randn(n, n)).Q)
-	S = Diagonal(coeff .* convert(Float64, base).^(-(0:n-1))) # Prescribe sigmas
+	S = Diagonal(coeff .* convert(Float64, base).^(0:n-1)) # Prescribe sigmas
 	return Q1 * S * Q2
 end
 
@@ -55,12 +55,12 @@ function Solve(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n 
 		@sync @distributed for j in 1:N # Parallel for loop
 			#A = FullRank(m, n)
 			#A = PartRank(m, n, i)
-			#A = GeoSig(m, n; coeff = 10, base = 0.9)
-			A = AlgSig(m, n; coeff = 10, pow = 1.5)
-			
+			A = GeoSig(m, n; coeff = 1, base = 0.85)
+			#A = AlgSig(m, n; coeff = 10, pow = 1.5)
+
 			Arand = RandSVD(A, i, l)
 			Atrunc = TruncSVD(A, i)
-			
+
 			# 2 norm, F norm, trace norm
 			res[j,:] = [opnorm(A - Arand) / opnorm(A - Atrunc) norm(A - Arand) / norm(A - Atrunc) opnorm(A - Arand, 1) / opnorm(A - Atrunc, 1)]
 		end
@@ -85,10 +85,10 @@ function SolveR(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n
 		# Perform the decomposition N times to get average errors
 		@sync @distributed for j in 1:N # Parallel for loop
 			A = PartRank(m, n, i)
-			
+
 			Arand = RandSVD(A, i, l)
 			Atrunc = TruncSVD(A, i)
-			
+
 			# 2 norm, F norm, trace norm
 			res[j,:] = [opnorm(A - Arand) opnorm(A - Atrunc) norm(A - Arand) norm(A - Atrunc) opnorm(A - Arand, 1) opnorm(A - Atrunc, 1)]
 		end
@@ -114,11 +114,11 @@ m = 500
 n = 250
 l = 5
 
-N = 1000
+N = 100
 
 #Solve(m, n, N, l; fname = "FullRankBig.dat")
 #Solve(m, n, N, l; fname = "PartRankBig.dat")
-#Solve(m, n, N, l; fname = "GeoBig.dat")
+Solve(m, n, N, l; fname = "GeoBig.dat")
 #Solve(m, n, N, l; fname = "AlgBig.dat")
 
-SolveR(m, n, N, l; fname = "RankConverge.dat")
+#SolveR(m, n, N, l; fname = "RankConverge.dat")
