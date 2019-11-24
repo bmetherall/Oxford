@@ -50,7 +50,7 @@ end
 
 # Main function to compute errors
 function Solve(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n - l; fname = "Norm.dat")
-    f = open(fname, "w");
+	f = open(fname, "w");
 	for i in 1:rmax # Loop over ranks
 		res = SharedArray{Float64, 2}((N, 3)) # Results array (shared between all workers)
 		println(i)
@@ -75,8 +75,8 @@ function Solve(m::Int64, n::Int64, N::Int64 = 25, l::Int64 = 5, rmax::Int64 = n 
 		avgT = mean(res[:,3])
 		sdT = std(res[:,3])
 		writedlm(f, [i avg2 sd2 avgF sdF avgT sdT])
-    end
-    close(f)
+	end
+	close(f)
 end
 
 # Compile
