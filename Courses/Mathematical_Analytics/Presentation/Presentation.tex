@@ -1,0 +1,65 @@
+\documentclass{beamer}
+
+\usepackage[subfolder,cleanup]{gnuplottex}
+\usepackage{animate}
+
+\usetheme{InFoMM}
+
+\title{}
+\date{December 2019}
+\author{Brady Metherall}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}[fragile]
+    \frametitle{Sale Data}
+    \begin{figure}
+        \centering
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 4.0in,2.67in lw 3}]
+            set grid
+            set xl 'Units Sold'
+            set yl 'Number of Days'
+
+            p '../SaleData.dat' using 1:(1.0) smooth frequency w boxes not
+        \end{gnuplot}
+    \end{figure}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+    \frametitle{Sale Data}
+    \begin{figure}
+        \centering
+        \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 4.0in,2.67in lw 3}]
+            set grid
+            set xl 'Units Sold'
+            set yl 'Number of Days'
+            set samples 1000
+
+            p '../SaleData.dat' using 1:(1.0) smooth frequency w boxes not, \
+            '../Animate/Fit6.dat' u 1 smooth csplines w l lc 7 lw 1.5 not
+        \end{gnuplot}
+    \end{figure}
+\end{frame}
+
+
+\frame{
+    \frametitle{Solution}
+    \begin{figure}
+        \centering
+        \animategraphics[loop, autoplay]{4}{../Animate/Frames/Frame}{0}{16}
+    \end{figure}
+}
+
+
+\begin{frame}[fragile]
+    \frametitle{Pretend Sale Data}
+    \begin{figure}
+        \centering
+        \animategraphics[loop, autoplay]{24}{../Animate/Frames/FakeFrame}{0}{145}
+    \end{figure}
+\end{frame}
+
+\end{document}
