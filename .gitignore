@@ -6,6 +6,17 @@ Mansfield/*
 *.log
 *.gz
 *.eps
+*.latexmk
+*.fls
+*.out
+*.vrb
+*.nav
+*.snm
+*.toc
+*.vrb
+*.sty
+*InFoMM.pdf
+*ESPRC.pdf
 *converted*
 *gnuplottex*
 *errors
