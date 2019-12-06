@@ -1,4 +1,4 @@
-set terminal epslatex standalone color size 4.0in,2.67in lw 3 font 'sffamily'
+set terminal epslatex standalone color size 4.0in,2.67in lw 3 font 'cmss'
 
 set grid
 set xl 'Units Sold'
