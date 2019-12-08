@@ -5,15 +5,24 @@
 
 \usetheme{InFoMM}
 
-\title{}
+\title{Predicting Online Sales}
 \date{December 2019}
 \author{Brady Metherall}
 
 \begin{document}
 \frame{\titlepage}
 
+\begin{frame}
+	\frametitle{Motivation}
+	\begin{itemize}
+		\item We have data of the number of online sales for 2000 days.
+		\item Some days our competitors use additional marketing which effects our sales, but, we do not know which days.
+		\item We model the distribution and use a computer to fit the model to the data.
+	\end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]
-    \frametitle{Sale Data}
+    \frametitle{Daily Sale Data}
     \begin{figure}
         \centering
         \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 4.0in,2.67in lw 3}]
@@ -26,36 +35,25 @@
     \end{figure}
 \end{frame}
 
-
-
-\begin{frame}[fragile]
-    \frametitle{Sale Data}
-    \begin{figure}
-        \centering
-        \begin{gnuplot}[terminal=epslatex, terminaloptions={color size 4.0in,2.67in lw 3}]
-            set grid
-            set xl 'Units Sold'
-            set yl 'Number of Days'
-            set samples 1000
-
-            p '../SaleData.dat' using 1:(1.0) smooth frequency w boxes not, \
-            '../Animate/Fit6.dat' u 1 smooth csplines w l lc 7 lw 1.5 not
-        \end{gnuplot}
-    \end{figure}
-\end{frame}
-
-
 \frame{
-    \frametitle{Solution}
+    \frametitle{Model Solution}
     \begin{figure}
         \centering
         \animategraphics[loop, autoplay]{4}{../Animate/Frames/Frame}{0}{16}
     \end{figure}
 }
 
+\frame{
+	\frametitle{Results}
+	\begin{itemize}
+		\item Our competitors use additional marketing approximately 50\% of the time.
+		\item We sell an average of 50 units when they do not have additional marketing, and 20 units when they do.
+		\item What if our data is more complicated?
+	\end{itemize}
+}
 
 \begin{frame}[fragile]
-    \frametitle{Pretend Sale Data}
+    \frametitle{More Complicated Data}
     \begin{figure}
         \centering
         \animategraphics[loop, autoplay]{24}{../Animate/Frames/FakeFrame}{0}{145}
