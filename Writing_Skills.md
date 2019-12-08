@@ -34,6 +34,23 @@ The following are point notes for scientific writing compiled mostly from Higham
 - Offer another viewpoint
 - Mention further work
 
+## Revision
+- Can words/phrases/sentences be removed without changing the meaning?
+- Should any paragraphs be switched?
+- Are there any ambiguities?
+- Is there unnecessary repetition?
+- Passive to active voice?
+- Is each claim supported?
+- Is the notation consistent?
+- Are the references correct (to figures, sections...)?
+
+## Publishing
+
+###### Choosing a Journal
+- Read objectives of the Journal
+- See what journals are referenced a lot in your paper
+- Audience
+
 ## General
 - Number all equations
 - No 'Figure x shows', figures cannot show (or sections or papers)
@@ -47,9 +64,10 @@ is more helpful than 'Combining (3.14) and (2.9)'
 - Avoid tall in-line equations
 - Spell check!
 - Oxford commas
-- false if
+- false if (!!!)
 - Reference all tables and figures (and citations)
 - Cite original sources when possible
+- Dashes (!!!)
 
 ## Notation
 - Simplify notation, words instead of symbols
@@ -68,12 +86,11 @@ is more helpful than 'Combining (3.14) and (2.9)'
 - Use an adjective or adverb only if it earns its place
 - Short paragraphs are good
 
-
 ## Grammar
 - A sentence such as 'we use the 1, 2, and Inf-norms' should instead be 'we use the 1-, 2-, and Inf-norms', as *1* and *2* are prefixes of *norm* as well
 - Use *the* if the quantity is unique, and *a/an* if it is not
 - Italicize *et al.*, *e.g.*, or *i.e.* (and any other latin words)
-
+- Spell numbers less than 10
 
 ## Distinctions
 ###### Affect/Effect
@@ -110,7 +127,7 @@ was inaccurate'.
 - *Compare x and y* is probably best
 
 ## Words/Phrases to Avoid
-- Avoid *essentially, basically, actually, very, really, currently, in fact, thing, without doubt*
+- Avoid *essentially, basically, actually, very, really, currently, in fact, thing, without doubt, in this context*
 - Avoid *problem* since it is ambiguous whether it refers to difficulty of a step, or the problem of the paper
 - Don't start a sentence with *there is/are* or *it is*
 - In 'the reason ... is because' because is redundant

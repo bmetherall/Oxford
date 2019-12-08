@@ -6,7 +6,7 @@ Mansfield/*
 *.log
 *.gz
 *.eps
-*.latexmk
+*latexmk
 *.fls
 *.out
 *.vrb
@@ -15,8 +15,9 @@ Mansfield/*
 *.toc
 *.vrb
 *.sty
+*.mkv
 *InFoMM.pdf
-*ESPRC.pdf
+*EPSRC.pdf
 *converted*
 *gnuplottex*
 *errors
