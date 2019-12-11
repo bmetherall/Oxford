@@ -61,6 +61,27 @@ The new system consist of
 \end{align}
 The coefficient of $x_k$ in \eqref{eq:m0} and \eqref{eq:mplus} is 0 since $i \in M_0$ and $a_{ik} a_{lk} - a_{lk} a_{ik} = 0$, respectively. Therefore, $x_k$ is not in this new system.
 
+By taking positive linear combinations of the original system we have
+\begin{align}
+    a_{ik} \left( \sum_j^n a_{lj} x_j \right) - a_{lk} \left( \sum_j^n a_{ij} x_j \right) \leq a_{ik} \left( b_l \right) - a_{lk} \left( b_i \right),
+\end{align}
+because $a_{ik} > 0$ and $-a_{lk} > 0$ since $(i, l) \in M_+^k \times M_-^k$. We can now expand to yield \eqref{eq:mplus}.
+
+Note, from the original system we have
+\begin{align}
+    \begin{cases}
+        \displaystyle a_{ik} x_k \leq b_i - \sum_{j \neq k}^n a_{ij} x_j & i \in M_+^k, \\
+        \displaystyle a_{lk} x_k \geq b_l - \sum_{j \neq k}^n a_{lj} x_j & l \in M_-^k. \\
+    \end{cases}
+\end{align}
+It must then be that
+\begin{align}
+    \frac{1}{a_{lk}} \left( b_l - \sum_{j \neq k}^n a_{lj} x_j \right) \leq x_k \leq \frac{1}{a_{ik}} \left( b_i - \sum_{j \neq k}^n a_{ij} x_j \right)
+\end{align}
+for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
+\begin{align}
+    \max_{l \in M_-^k} \frac{1}{a_{lk}} \left( b_l - \sum_{j \neq k}^n a_{lj} x_j \right) \leq x_k \leq \min_{i \in M_+^k} \frac{1}{a_{ik}} \left( b_i - \sum_{j \neq k}^n a_{ij} x_j \right).
+\end{align}
 
 \textbf{Problem 2.}
 \begin{enumerate}[i)]
@@ -115,7 +136,7 @@ The coefficient of $x_k$ in \eqref{eq:m0} and \eqref{eq:mplus} is 0 since $i \in
 \textbf{Problem 4.}
 \begin{enumerate}[i)]
     \item The constraint matrix is the vertex-edge incidence matrix, $A$. Therefore, each column contains exactly two 1s. We can then choose the partitions to be $M_1 = V_1$ and $M_2 = V_2$, and the constraint matrix is totally unimodular.
-    \item The relaxation of the LP is
+    \item The LP relaxation is
     \begin{align}
         \nonumber \max_x \sum_{e \in E} x_e, \\
         \text{s.t.} \quad A x &\leq 1, \label{eq:edges} \\
@@ -127,7 +148,7 @@ The coefficient of $x_k$ in \eqref{eq:m0} and \eqref{eq:mplus} is 0 since $i \in
         \text{s.t} \quad A^T y \geq 1, \label{eq:nodes} \\
         \nonumber y_v \geq 0.
     \end{align}
-    Since $A^T$ is still totally unimodular this solves the IP problem as well. Additionally, for the minimum cardinality node covering, we do not require $y_v$ to be greater than one, and so $y_v \in \{ 0, 1 \}$.
+    Since $A^T$ is totally unimodular as well, the solution to the LP is identical to the IP. Additionally, for the minimum cardinality node covering, we do not require $y_v$ to be greater than one, and so $y_v \in \{ 0, 1 \}$.
     \item We can find trivial feasible solutions to \eqref{eq:edges} and \eqref{eq:nodes} is the empty matching and the full graph. Then by the Strong Duality Theorem and since $A$ is totally unimodular, K\"{o}nig's Theorem holds.
 \end{enumerate}
 
