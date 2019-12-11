@@ -1,0 +1,147 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+%\usepackage[subfolder,cleanup]{gnuplottex}
+%\usepackage{amsthm}
+%\usepackage{enumitem}
+%\usepackage{wrapfig}
+%\usepackage{subcaption}
+%\usepackage{hyperref}
+%\usepackage{tikz}
+
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+
+
+\usepackage{lipsum}
+
+
+% Nicer brackets for operators
+\let\originalleft\left
+\let\originalright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
+
+% Math operators
+\providecommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}\mathcal{O}\mathopen{}\left(#1\right)}}
+
+% Macros
+\newcommand{\diff}[3][]{\frac{\textrm{d}^{#1}#2}{\textrm{d}{#3}^{#1}}}
+\newcommand{\pdiff}[3][]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
+\newcommand{\df}{\, \textrm{d}}
+%\newcommand{\eps}{\varepsilon}
+
+% Row colouring in tables
+%\usepackage[table]{xcolor}
+%\rowcolors{2}{gray!25}{white}
+
+% Margin size
+\newgeometry{margin=2cm}
+
+% Reference style
+%\bibliographystyle{ieeetr}
+
+\title{Optimization Assignment}
+\author{Brady Metherall}
+\date{16 December 2019}
+
+\begin{document}
+\maketitle
+
+
+\textbf{Problem 1.}
+The new system consist of
+\begin{align}
+    \sum_j^n a_{ij} x_j &\leq b_i, & i &\in M_0, \label{eq:m0} \\
+    \sum_j^n (a_{ik} a_{lj} - a_{lk} a_{ij}) x_j, &\leq a_{ik} b_l - a_{lk} b_i & (i,l) &\in M_+ \times M_-. \label{eq:mplus}
+\end{align}
+The coefficient of $x_k$ in \eqref{eq:m0} and \eqref{eq:mplus} is 0 since $i \in M_0$ and $a_{ik} a_{lk} - a_{lk} a_{ik} = 0$, respectively. Therefore, $x_k$ is not in this new system.
+
+
+\textbf{Problem 2.}
+\begin{enumerate}[i)]
+    \item
+    If both systems had a solution, that would imply
+    \begin{align*}
+        \mathbf{0}^T &= yA, \\
+        0 &= (y A) x, \\
+        &= y (A x), \\
+        &\leq yb, \\
+        &< 0,
+    \end{align*}
+    which is a contradiction. Thus, both systems cannot have solutions.
+    \item
+    There must exist a $k_*$ such that $d_{k_*} < 0$, otherwise, our new system is in fact consistent.
+\end{enumerate}
+
+\textbf{Problem 3.}
+\begin{enumerate}[i)]
+    \item Both $y_t$ and $z_t$ are binary variables. If production occurs within period $t$, then $y_t = 1$. Furthermore, if production is switched on within period $t$, then $z_t = 1$.
+    \item
+    \begin{align}
+        \begin{pmatrix}
+            \mathbf{0}^T & \mathbf{1}^T \\
+            I - L & -I \\
+            -I & I \\
+            I & 0 \\
+            0 & I
+        \end{pmatrix}
+        \begin{pmatrix}
+            y \\
+            z
+        \end{pmatrix}
+        \leq
+        \begin{pmatrix}
+            k \\
+            \mathbf{0} \\
+            \mathbf{0} \\
+            \mathbf{1} \\
+            \mathbf{1}
+        \end{pmatrix}
+    \end{align}
+
+    \begin{align}
+        \begin{pmatrix}
+            \mathbf{0} & I - L^T & -I \\
+            \mathbf{1} & -I & I
+        \end{pmatrix}
+    \end{align}
+\end{enumerate}
+
+\textbf{Problem 4.}
+\begin{enumerate}[i)]
+    \item The constraint matrix is the vertex-edge incidence matrix, $A$. Therefore, each column contains exactly two 1s. We can then choose the partitions to be $M_1 = V_1$ and $M_2 = V_2$, and the constraint matrix is totally unimodular.
+    \item The relaxation of the LP is
+    \begin{align}
+        \nonumber \max_x \sum_{e \in E} x_e, \\
+        \text{s.t.} \quad A x &\leq 1, \label{eq:edges} \\
+        \nonumber x_e &\geq 0.
+    \end{align}
+    The dual is then given by
+    \begin{align}
+        \nonumber \min_y \sum_{v \in V} y_v, \\
+        \text{s.t} \quad A^T y \geq 1, \label{eq:nodes} \\
+        \nonumber y_v \geq 0.
+    \end{align}
+    Since $A^T$ is still totally unimodular this solves the IP problem as well. Additionally, for the minimum cardinality node covering, we do not require $y_v$ to be greater than one, and so $y_v \in \{ 0, 1 \}$.
+    \item We can find trivial feasible solutions to \eqref{eq:edges} and \eqref{eq:nodes} is the empty matching and the full graph. Then by the Strong Duality Theorem and since $A$ is totally unimodular, K\"{o}nig's Theorem holds.
+\end{enumerate}
+
+\textbf{Problem 5.}
+
+\textbf{Problem 6.}
+
+\textbf{Problem 7.}
+
+\textbf{Problem 8.}
+
+\textbf{Problem 9.}
+
+
+%\bibliography{Ref}
+
+\end{document}
