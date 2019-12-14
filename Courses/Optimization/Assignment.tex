@@ -65,24 +65,24 @@ The new system consist of
 The coefficient of $x_k$ in \eqref{eq:m0} and \eqref{eq:mplus} is 0 since $i \in M_0$ and $a_{ik} a_{lk} - a_{lk} a_{ik} = 0$, respectively. Therefore, $x_k$ is not in this new system.
 
 By taking positive linear combinations of the original system we have
-\begin{align}
+\begin{align*}
     a_{ik} \left( \sum_j^n a_{lj} x_j \right) - a_{lk} \left( \sum_j^n a_{ij} x_j \right) \leq a_{ik} \left( b_l \right) - a_{lk} \left( b_i \right),
-\end{align}
+\end{align*}
 because $a_{ik} > 0$ and $-a_{lk} > 0$ since $(i, l) \in M_+^k \times M_-^k$. We can now expand to yield \eqref{eq:mplus}. Note, from the original system we have
-\begin{align}
+\begin{align*}
     \begin{cases}
         \displaystyle a_{ik} x_k \leq b_i - \sum_{j \neq k}^n a_{ij} x_j & i \in M_+^k, \\
         \displaystyle a_{lk} x_k \geq b_l - \sum_{j \neq k}^n a_{lj} x_j & l \in M_-^k. \\
     \end{cases}
-\end{align}
+\end{align*}
 It must then be that
-\begin{align}
+\begin{align*}
     \frac{1}{a_{lk}} \left( b_l - \sum_{j \neq k}^n a_{lj} x_j \right) \leq x_k \leq \frac{1}{a_{ik}} \left( b_i - \sum_{j \neq k}^n a_{ij} x_j \right)
-\end{align}
+\end{align*}
 for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
-\begin{align}
+\begin{align*}
     \max_{l \in M_-^k} \frac{1}{a_{lk}} \left( b_l - \sum_{j \neq k}^n a_{lj} x_j \right) \leq x_k \leq \min_{i \in M_+^k} \frac{1}{a_{ik}} \left( b_i - \sum_{j \neq k}^n a_{ij} x_j \right).
-\end{align}
+\end{align*}
 
 \textbf{Problem 2.}
 \begin{enumerate}[i)]
@@ -104,7 +104,7 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 \begin{enumerate}[i)]
     \item Both $y_t$ and $z_t$ are binary variables. If production occurs within period $t$, then $y_t = 1$. Furthermore, if production is switched on within period $t$, then $z_t = 1$.
     \item We can express the system in matrix form as
-    \begin{align}
+    \begin{align*}
         A
         \begin{pmatrix}
             y \\
@@ -118,9 +118,9 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
             \mathbf{1} \\
             \mathbf{1}
         \end{pmatrix},
-    \end{align}
+    \end{align*}
     where
-    \begin{align}
+    \begin{align*}
         A =
         \begin{pmatrix}
             \mathbf{0}^T & \mathbf{1}^T \\
@@ -129,14 +129,14 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
             I & 0 \\
             0 & I
         \end{pmatrix}.
-    \end{align}
+    \end{align*}
     We wish to show that $A$ is totally unimodular, to start, we notice that $A$ is totally unimodular if and only if
-    \begin{align}
+    \begin{align*}
         \begin{pmatrix}
             \mathbf{0} & I - L^T & -I \\
             \mathbf{1} & -I & I
         \end{pmatrix}
-    \end{align}
+    \end{align*}
     is totally unimodular, as this is the transpose of $A$ after removing the identity in the lower portion.
 \end{enumerate}
 
@@ -177,35 +177,35 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
         \label{eq:ks}
     \end{gather}
     With associated dual
-    \begin{gather}
+    \begin{gather*}
         \max_y \, (b, \ \mathbf{1}^T) y, \\
         \text{s.t.} \quad
         \begin{pmatrix}
             a & I
         \end{pmatrix}
         y \geq c.
-    \end{gather}
+    \end{gather*}
     We find that \eqref{eq:ks} is an equality for the first $r$ rows. Expanding the constraint yields
     \begin{align}
         a_i y_1 + y_{i+1} \geq c_i.
         \label{eq:ksdual}
     \end{align}
     Now, by complementary slackness, \eqref{eq:ksdual} must be active for $i \leq r$, and $y_i = 0$ for $i = r + 1, \cdots, n + 1$. Evaluating \eqref{eq:ksdual} at $i = r$ gives
-    \begin{align}
+    \begin{align*}
         y_1 = \frac{c_r}{a_r},
-    \end{align}
+    \end{align*}
     and so,
-    \begin{align}
+    \begin{align*}
         y_{i+1} = c_i - a_i \frac{c_r}{a_r}.
-    \end{align}
+    \end{align*}
     We can now show that the claimed solution is indeed optimal by showing the values of the objective functions are equal:
-    \begin{align}
+    \begin{align*}
         (b, \ \mathbf{1}^T) y &= b \frac{c_r}{a_r} + \sum_j^{r-1} \left( c_j - a_j \frac{c_r}{a_r} \right), \\
         &= b \frac{c_r}{a_r} + \sum_j^{r-1} c_j - \frac{c_r}{a_r} \sum_j^{r-1} a_j, \\
         &= \frac{c_r}{a_r} \left( b - \sum_j^{r-1} a_j \right) + \sum_j^{r-1} c_j, \\
         &= \sum_j^{r-1} c_j + c_r \frac{b - \sum_j^{r-1} a_j}{a_r}, \\
         &= c^T x.
-    \end{align}
+    \end{align*}
     In the case that $x_r = 0$, our analysis remains the same, and the claimed solution is still optimal.
     \item
     \begin{figure}[tbp]
@@ -301,32 +301,63 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
         &= \max_x c^T x,
     \end{align*}
     to show that it is equivalent to the objective in (EKP). Additionally, any feasible solution to (EKP) must also be a feasible solution to (GR):
-    \begin{align}
+    \begin{align*}
         0 &= \sum_j a_j x_j - b, \\
         &= \sum_{j \ne k} a_j x_j + a_k x_k - b, \\
         &\equiv \sum_{j \ne k} a_j x_j - b \, \text{(mod $a_k$)},
-    \end{align}
+    \end{align*}
     since $x \in \mathbb{Z}^n$.
-    \item
-    \item
-    \item
+    \item this is part 3 right
+
+
+    \begin{figure}[tbp]
+        \centering
+        \begin{tikzpicture}[minimum size=1.5cm]
+            \def \radius {3.5cm}
+
+            % Nodes
+            \node (A) [draw, circle] at ({60 * 0 + 90}:\radius) {$0$};
+            \node (B) [draw, circle] at ({60 * 1 + 90}:\radius) {$1$};
+            \node (C) [draw, circle] at ({60 * 2 + 90}:\radius) {$2$};
+            \node (D) [draw, circle] at ({60 * 3 + 90}:\radius) {$\cdots$};
+            \node (E) [draw, circle] at ({60 * 4 + 90}:\radius) {$a_k - 2$};
+            \node (F) [draw, circle] at ({60 * 5 + 90}:\radius) {$a_k - 1$};
+            % Length 1 edges
+            \draw [->] (A) to node [anchor=north] {$C_{0,1}$} (B);
+            \draw [->] (B) to node [anchor=west] {$C_{1,1}$} (C);
+            \draw [->] (C) to node [anchor=south] {$C_{2,1}$} (D);
+            \draw [->] (D) to node [anchor=south] {$C_{a_{k-3},1}$} (E);
+            \draw [->] (E) to node [anchor=east] {$C_{a_{k-2},1}$} (F);
+            \draw [->] (F) to node [anchor=north] {$C_{a_{k-1},1}$} (A);
+            % Length 2 edges
+            \draw [->, blue] (A) to [out=180, in=120, looseness=1.6, blue] node [anchor=east] {$C_{0,2}$} (C);
+            \draw [->, blue] (B) to [out=240, in=180, looseness=1.6, blue] node [anchor=east] {$C_{1,2}$} (D);
+            \draw [->, blue] (C) to [out=300, in=240, looseness=1.6, blue] node [anchor=east] {$C_{2,2}$} (D);
+            \draw [->, blue] (D) to [out=300, in=240, looseness=1.6, blue] node [anchor=west] {$C_{a_{k-4},2}$} (E);
+            \draw [->, blue] (D) to [out=0, in=300, looseness=1.6, blue] node [anchor=west] {$C_{a_{k-3},2}$} (F);
+            \draw [->, blue] (E) to [out=60, in=0, looseness=1.6, blue] node [anchor=west] {$C_{a_{k-2},2}$} (A);
+            \draw [->, blue] (F) to [out=120, in=60, looseness=1.6, blue] node [anchor=south] {$C_{a_{k-1},2}$} (B);
+        \end{tikzpicture}
+        \caption{System (GR) depicted as a shortest path problem.}
+        \label{fig:shortpath}
+    \end{figure}
 \end{enumerate}
 
 \textbf{Problem 7.}
 By assumption
-\begin{align}
+\begin{align*}
     a^T x^* &= \sum_{j \in \{ i : x_i^* = 1 \}} a_j, \\
     &> r.
-\end{align}
+\end{align*}
 Therefore, there exists a cover, $C$, such that
-\begin{align}
+\begin{align*}
     \sum_{j \in C} a_j x_j \leq r
-\end{align}
+\end{align*}
 is a cut for $x^*$. Since the algorithm first reorders $a_j$ to be in descending order, it must be that it finds the minimal cover.
 
 \textbf{Problem 8.}
 Consider the system
-\begin{align}
+\begin{align*}
     \min_x \, &\mathbf{1}^T x \\
     \text{such that }
     \begin{pmatrix}
@@ -342,40 +373,40 @@ Consider the system
         0 \\
         0
     \end{pmatrix}.
-\end{align}
+\end{align*}
 By examining the first two rows, we find that
-\begin{align}
+\begin{align*}
     1 &\leq 3 x_1, \\
     2 &\leq 6 x_1, \\
     2 \leq 6 x_1 &\leq 6 x_1 + x_2 \leq 4.
-\end{align}
+\end{align*}
 We can then simplify this to show
-\begin{align}
+\begin{align*}
     2 \leq 6 x_1 \leq 4, \\
     \frac{1}{3} \leq x_1 \leq \frac{2}{3}
-\end{align}
+\end{align*}
 which has no feasible solutions for $x_1 \in \mathbb{Z}$, and therefore the IP is infeasible.
 
 \textbf{Problem 9.}
 
 \begin{enumerate}[i)]
     \item Take the cover, $C_i$, to be $\{ j : 1 \leq j \leq n \}$. Then, by assumption,
-    \begin{align}
+    \begin{align*}
         \sum_j c_{ij} > b_i,
-    \end{align}
+    \end{align*}
     therefore, for $x$ to be feasible there must be at least one $0$ entry. Thus,
-    \begin{align}
+    \begin{align*}
         \sum_j x_{ij} &\leq n - 1, \\
         &\leq |C_i| - 1,
-    \end{align}
+    \end{align*}
     as desired.
     \item If $x_{mj^*}^* > 1/2$ then GUB is not a good branching rule. As $\sum_i x_{ij} = 1$, then $p = m$. Thus, $\mathscr{F}_1 = \emptyset$ and $\mathscr{F}_2 = \mathscr{F}$. A better rule is follows:
     \begin{itemize}
         \item Reorder the elements such that $\tilde{x}_{i,j^*} \leq \tilde{x}_{i+1,j^*}$.
         \item Reorder the elements once again such that (without loss of generality)
-        \begin{align}
+        \begin{align*}
             \tilde{x}_{1,j^*}, \tilde{x}_{3,j^*}, \cdots, \tilde{x}_{m,j^*}, \tilde{x}_{(m - 1),j^*}, \tilde{x}_{(m - 3),j^*}, \cdots, \tilde{x}_{2,j^*}.
-        \end{align}
+        \end{align*}
         \item Apply GUB on this new arrangement.
     \end{itemize}
 \end{enumerate}
