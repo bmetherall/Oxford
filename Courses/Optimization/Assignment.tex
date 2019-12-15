@@ -20,7 +20,9 @@
 \usepackage{mathrsfs}
 
 
-\usepackage{lipsum}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 
 
 % Nicer brackets for operators
@@ -37,6 +39,11 @@
 \newcommand{\pdiff}[3][]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
 \newcommand{\df}{\, \textrm{d}}
 %\newcommand{\eps}{\varepsilon}
+
+\setlist{
+  listparindent=\parindent,
+  parsep=0pt,
+}
 
 % Row colouring in tables
 %\usepackage[table]{xcolor}
@@ -57,10 +64,10 @@
 
 
 \textbf{Problem 1.}
-The new system consist of
+The new system consists of
 \begin{align}
-	\sum_j^n a_{ij} x_j &\leq b_i, & i &\in M_0, \label{eq:m0} \\
-	\sum_j^n (a_{ik} a_{lj} - a_{lk} a_{ij}) x_j, &\leq a_{ik} b_l - a_{lk} b_i & (i,l) &\in M_+ \times M_-. \label{eq:mplus}
+	\sum_j^n a_{ij} x_j &\leq b_i, & i &\in M_0^k, \label{eq:m0} \\
+	\sum_j^n (a_{ik} a_{lj} - a_{lk} a_{ij}) x_j, &\leq a_{ik} b_l - a_{lk} b_i & (i,l) &\in M_+^k \times M_-^k. \label{eq:mplus}
 \end{align}
 The coefficient of $x_k$ in \eqref{eq:m0} and \eqref{eq:mplus} is 0 since $i \in M_0$ and $a_{ik} a_{lk} - a_{lk} a_{ik} = 0$, respectively. Therefore, $x_k$ is not in this new system.
 
@@ -95,12 +102,12 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		&\leq yb, \\
 		&< 0,
 	\end{align*}
-	which is a contradiction. Thus, both systems cannot have solutions.
+	which is a contradiction. Thus, both systems cannot simultaneously have solutions.
 	\item There must exist a $k_*$ such that $d_{k_*} < 0$, otherwise, our new system is in fact consistent. From the original system we have
 	\begin{align*}
 		\sum_j A_{ij} x_j \leq b_i,
 	\end{align*}
-	and so by taking conic combinations of these yield the same system:
+	by taking conic combinations we find the equivalent system:
 	\begin{align*}
 		\sum_i \sum_j  y_i A_{ij} x_j &\leq \sum_i y_i b_i, \\
 		\sum_j \left( \sum_i  y_i A_{ij} \right) x_j &\leq \sum_i y_i b_i.
@@ -139,14 +146,40 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 			0 & I
 		\end{pmatrix}.
 	\end{align*}
-	We wish to show that $A$ is totally unimodular, to start, we notice that $A$ is totally unimodular if and only if
+	We wish to show that $A$ is totally unimodular; to start, we notice that $A$ is totally unimodular if and only if
 	\begin{align*}
+		\widetilde{A} =
 		\begin{pmatrix}
 			\mathbf{0} & I - L^T & -I \\
 			\mathbf{1} & -I & I
 		\end{pmatrix}
 	\end{align*}
-	is totally unimodular, as this is the transpose of $A$ after removing the identity in the lower portion.
+	is totally unimodular, as this is the transpose of $A$ after removing the identity in the lower portion. Clearly, $\widetilde{A}_{ij} \in \{ 0, \pm 1 \}$, and so it is sufficient to show that for any subset, $M$, of the rows of $\widetilde{A}$, there exists a partition $(M_1, M_2)$ of $M$ such that each column, $j$, satisfies
+	\begin{align*}
+		\left| \sum_{i \in M_1} \widetilde{A}_{ij} - \sum_{i \in M_2} \widetilde{A}_{ij} \right| \leq 1.
+	\end{align*}
+	To assign the rows to the partitions we use Algorithm \ref{alg:part}.
+	\begin{algorithm}[tbp]
+	    \begin{algorithmic}%[1]
+			\For{$i > n \in M$}
+				\State Alternate which partition $i$ is in
+			\EndFor
+
+			\For{$i \leq n \in M$ (descending) \textbf{and} $i$ unassigned}
+				\If{$i-1, i, i+n \in M$}
+					\State $i-1, i \in \text{Part}(i+n)$
+				\ElsIf{$i, i+n \in M$}
+					\State $i \in \text{Part}(i+n)$
+				\ElsIf{$i-1, i \in M$}
+					\State $i-1, i \in M_1$ (WLOG)
+				\Else
+					\State $i \in M_1$ (WLOG)
+				\EndIf
+			\EndFor
+	    \end{algorithmic}
+	    \caption{Partitioning of $\widetilde{A}$.}
+	    \label{alg:part}
+	\end{algorithm}
 \end{enumerate}
 
 \textbf{Problem 4.}
@@ -165,7 +198,7 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		\nonumber y_v &\geq 0.
 	\end{align}
 	Since $A^T$ is totally unimodular as well, the solution to the LP is identical to the IP. Additionally, for the minimum cardinality node covering, we do not require $y_v$ to be greater than one, and so $y_v \in \{ 0, 1 \}$.
-	\item We can find trivial feasible solutions to \eqref{eq:edges} and \eqref{eq:nodes} is the empty matching and the full graph. Then by the Strong Duality Theorem and since $A$ is totally unimodular, K\"{o}nig's Theorem holds.
+	\item Trivial feasible solutions to \eqref{eq:edges} and \eqref{eq:nodes} are the empty matching and the full graph. Then by the Strong Duality Theorem and since $A$ is totally unimodular, K\"{o}nig's Theorem holds.
 \end{enumerate}
 
 \textbf{Problem 5.}
@@ -215,6 +248,7 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		&= \sum_j^{r-1} c_j + c_r \frac{b - \sum_j^{r-1} a_j}{a_r}, \\
 		&= c^T x.
 	\end{align*}
+
 	In the case that $x_r = 0$, our analysis remains the same, and the claimed solution is still optimal.
 	\item
 	\begin{figure}[tbp]
@@ -250,7 +284,7 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		\text{s.t.} \quad (5, \, 3, \, 8, \, 7) x \leq 12, \\
 		x \in \mathbb{Z}_2^4,
 	\end{gather*}
-	using branch and bound, as depicted in Figure \ref{fig:bnb}. As the system is well ordered already, we may use the result of the previous question to find the relaxed greedy solution $(1, \, 1, \, 1/2, \, 0)^T$. This gives us the upper bound $\bar{z} = \lfloor 39.5 \rfloor$, lower bound $\underbar{$z$} = 27$, and incumbent $(1, \, 1, \, 0, \, 0)^T$. As $x_3 \in \mathbb{Q}$, we branch $\mathcal{F}$ into $\mathcal{F}_0$ with $x_3 = 0$, and $\mathcal{F}_1$ with $x_3 = 1$.
+	using branch and bound, as depicted in Figure \ref{fig:bnb}. As the system is well ordered already, we may use the result of the previous sub-question to find the relaxed greedy solution $(1, \, 1, \, 1/2, \, 0)^T$. This gives us the upper bound $\bar{z} = \lfloor 39.5 \rfloor$, lower bound $\underbar{$z$} = 27$, and incumbent $(1, \, 1, \, 0, \, 0)^T$. As $x_3 \in \mathbb{Q}$, we branch $\mathcal{F}$ into $\mathcal{F}_0$ with $x_3 = 0$, and $\mathcal{F}_1$ with $x_3 = 1$.
 
 	Considering first $\mathcal{F}_1$, as we wish to maximize, we find the simplified problem
 	\begin{gather*}
@@ -268,7 +302,7 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		\end{pmatrix}
 		\leq 4.
 	\end{gather*}
-	Clearly, from the constraints $x_1 = 0$ and $x_4 = 0$ as they must be integers. This allows us to branch into $\mathcal{F}_{10}$ and $\mathcal{F}_{11}$ for $x_2 = 0$ and $x_2 = 1$, respectively. The node $\mathcal{F}_{10}$ contains a single feasible point which yields 25 as the objective, as this is less than $\underbar{$z$}$, and therefore, may be pruned. Similarly, $\mathcal{F}_{11}$ gives the improved lower bound $\underbar{z} = 35$ with incumbent .
+	Clearly, from the constraints $x_1 = 0$ and $x_4 = 0$ as they must be integers. This allows us to branch into $\mathcal{F}_{10}$ and $\mathcal{F}_{11}$ for $x_2 = 0$ and $x_2 = 1$, respectively. The node $\mathcal{F}_{10}$ contains a single feasible point which yields 25 as the objective, this is less than $\underbar{$z$}$, and therefore, may be pruned. Similarly, $\mathcal{F}_{11}$ gives the improved lower bound $\underbar{z} = 35$ with incumbent $(0, \, 1, \, 1, \, 0)^T$.
 
 	Moving back to $\mathcal{F}_{0}$, we have the problem
 	\begin{gather*}
@@ -286,7 +320,7 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		\end{pmatrix}
 		\leq 12.
 	\end{gather*}
-	Solving the LP relaxation we find $(1, \, 1, \, 0, \, 4/7)^T$, and so we branch to $\mathcal{F}_{00}$ and $\mathcal{F}_{00}$ based on the value of $x_4$. In the case $x_4 = 0$ ($\mathcal{F}_{00}$), we find $(1, \, 1, \, 0, \, 0)^T$, which is a former incumbent, and can be pruned. On the other hand, $x_4 = 1$ and $\mathcal{F}_{01}$, we find $(1, \, 0, \, 0, \, 1)^T$ which produces an objective of 34. This branch may also be pruned as this is worse than our current incumbent.
+	Solving the LP relaxation we find $(1, \, 1, \, 0, \, 4/7)^T$, and so we branch to $\mathcal{F}_{00}$ and $\mathcal{F}_{01}$ based on the value of $x_4$. In the case $x_4 = 0$ ($\mathcal{F}_{00}$), we find $(1, \, 1, \, 0, \, 0)^T$, which is a former incumbent, and can be pruned. On the other hand, $x_4 = 1$ and $\mathcal{F}_{01}$, we find $(1, \, 0, \, 0, \, 1)^T$ which produces an objective of 34. This branch may also be pruned as this is worse than our current incumbent.
 
 	Now all of the branches have been exhausted, and therefore, we have found the optimal solution of $(0, \, 1, \, 1, \, 0)^T$.
 \end{enumerate}
@@ -316,7 +350,11 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		&\equiv \sum_{j \ne k} a_j x_j - b \, \text{(mod $a_k$)},
 	\end{align*}
 	since $x \in \mathbb{Z}^n$.
-	\item this is part 3 right
+	\item The system (GR) can be solved as a shortest path problem. The summands in the objective function are negative, and so we can frame it as a minimization by changing the sign of the summands. In this way the associated cost with each edge is then
+	\begin{align*}
+		C_{i,j} := -c_j + \frac{c_k}{a_k} a_j > 0.
+	\end{align*}
+	The modulus in the constraint allows us to circle around the graph multiple times as long as we finish on node $b$; the graph can be seen in Figure \ref{fig:shortpath}.
 
 
 	\begin{figure}[tbp]
@@ -360,7 +398,7 @@ By assumption
 \end{align*}
 Therefore, there exists a cover, $C$, such that
 \begin{align*}
-	\sum_{j \in C} a_j x_j \leq r
+	\sum_{j \in C} a_j x_j \leq r,
 \end{align*}
 is a cut for $x^*$. Since the algorithm first reorders $a_j$ to be in descending order, it must be that it finds the minimal cover.
 
@@ -368,7 +406,7 @@ is a cut for $x^*$. Since the algorithm first reorders $a_j$ to be in descending
 Consider the system
 \begin{align*}
 	\min_x \, &\mathbf{1}^T x \\
-	\text{such that }
+	\text{s.t.} \quad
 	\begin{pmatrix}
 		6 & 1 \\
 		-3 & 0 \\
