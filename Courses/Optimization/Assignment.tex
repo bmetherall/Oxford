@@ -96,13 +96,17 @@ for all $(i, l) \in M_+^k \times M_-^k$. Therefore,
 		&< 0,
 	\end{align*}
 	which is a contradiction. Thus, both systems cannot have solutions.
-	\item
-	There must exist a $k_*$ such that $d_{k_*} < 0$, otherwise, our new system is in fact consistent.
-
-
-
-
-	\item
+	\item There must exist a $k_*$ such that $d_{k_*} < 0$, otherwise, our new system is in fact consistent. From the original system we have
+	\begin{align*}
+		\sum_j A_{ij} x_j \leq b_i,
+	\end{align*}
+	and so by taking conic combinations of these yield the same system:
+	\begin{align*}
+		\sum_i \sum_j  y_i A_{ij} x_j &\leq \sum_i y_i b_i, \\
+		\sum_j \left( \sum_i  y_i A_{ij} \right) x_j &\leq \sum_i y_i b_i.
+	\end{align*}
+	As this must be equivalent to the original system we have $yA = \mathbf{0}^T$, and $yb < 0$.
+	\item Since the $y_i$s were chosen to be non-negative, $y$ satisfies the alternate system.
 \end{enumerate}
 
 \textbf{Problem 3.}
