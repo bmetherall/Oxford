@@ -122,11 +122,11 @@ int main(int argc, char *argv[]){
 	cout << dp << endl;
 	*/
 
-	srand(6);
+	srand(100);
 
-	array<array<double, 3>, 3> a;
-	array<array<double, 3>, 3> b;
-	array<array<double, 3>, 3> c;
+	double a[3][3];
+	double b[3][3];
+ 	double c[3][3];
 
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]){
 
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
-			c[i][j] = 0;
+			c[i][j] = 0.0;
 			for (int k = 0; k < 3; k++) {
 				c[i][j] += a[i][k] * b[k][j];
 			}
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 	}
 
 	for (int i = 0; i < 3; i++) {
-		cout << c[i][0] << '\t' << c[i][1] << '\t' << c[i][2] << endl;
+		cout << '|' << c[i][0] << '\t'	<< c[i][1] << '\t' << c[i][2] << '|' << endl;
 	}
 
 	return 0;
