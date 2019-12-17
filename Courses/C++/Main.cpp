@@ -71,26 +71,23 @@ int main(int argc, char *argv[]){
 	out.setf(ios::scientific|ios::showpos);
 
 	for (int i = 0; i < N; i++) {
-		out << x[i] << ' ' << y[i] << '\n';
+		out << x[i] << '\t' << y[i] << '\n';
 	}
 
 	out.close();
 	*/
 
-
+	/*
 	const int N = pow(10, 4);
 
 	array<double, N> x;
 	array<double, N> y;
 
-	string line;
 	ifstream input("Euler.dat");
 	assert(input.is_open());
 
-	for (int i = 0; i < N-2; i++) {
-		istringstream s(line);
-		s >> x[i] >> y[i];
-		cout << y[i] << endl;
+	for (int i = 0; i < N; i++) {
+		input >> x[i] >> y[i];
 	}
 
 	input.close();
@@ -104,7 +101,52 @@ int main(int argc, char *argv[]){
 	}
 
 	cout << worst << endl;
+	*/
 
+	/*
+	srand(6);
+
+	double dp = 0.0;
+	array<double, 3> a;
+	array<double, 3> b;
+
+	for (int i = 0; i < 3; i++) {
+		a[i] = (float)rand() / RAND_MAX;
+		b[i] = (float)rand() / RAND_MAX;
+	}
+
+	for (int i = 0; i < 3; i++) {
+		dp += a[i] * b[i];
+	}
+
+	cout << dp << endl;
+	*/
+
+	srand(6);
+
+	array<array<double, 3>, 3> a;
+	array<array<double, 3>, 3> b;
+	array<array<double, 3>, 3> c;
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			a[i][j] = (float)rand() / RAND_MAX;
+			b[i][j] = (float)rand() / RAND_MAX;
+		}
+	}
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			c[i][j] = 0;
+			for (int k = 0; k < 3; k++) {
+				c[i][j] += a[i][k] * b[k][j];
+			}
+		}
+	}
+
+	for (int i = 0; i < 3; i++) {
+		cout << c[i][0] << '\t' << c[i][1] << '\t' << c[i][2] << endl;
+	}
 
 	return 0;
 }
