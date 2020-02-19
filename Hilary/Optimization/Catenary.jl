@@ -8,6 +8,14 @@
 
 using KNITRO
 using Test
+using DelimitedFiles
+
+n = 6
+gamma = 0.8
+
+m = 1.0
+g = 1.0
+L = 10.0
 
 # Create a new Knitro solver instance.
 kc = KNITRO.KN_new()
@@ -21,38 +29,45 @@ KNITRO.KN_load_param_file(kc, options)
 
 # Add the variables and set their bounds and initial values.
 # Note: unset bounds assumed to be infinite.
-KNITRO.KN_add_vars(kc, 3) # Three variables in problem
-KNITRO.KN_set_var_lobnds(kc, [0., 0., 0.]) # Set lower bound for each variable
-KNITRO.KN_set_var_primal_init_values(kc,  [2.0, 2.0, 2.0]) # Initial starting point
+KNITRO.KN_add_vars(kc, 2n) # Number of variables in problem
+KNITRO.KN_set_var_primal_init_values(kc,  ones(2n)) # Initial starting point
 
 # Add the constraints and set their bounds.
-KNITRO.KN_add_cons(kc, 2) # Two constraints
-KNITRO.KN_set_con_eqbnds(kc, 0, 56.0) # First constraint: equality of 56
-KNITRO.KN_set_con_lobnds(kc, 1, 25.0) # Second constraint: lower bound of 25
+KNITRO.KN_add_cons(kc, n + 3) # Number of constraints
+# Boundary constraints
+KNITRO.KN_set_con_eqbnds(kc, 0, 0.0)
+KNITRO.KN_set_con_eqbnds(kc, 1, 0.0)
+KNITRO.KN_set_con_eqbnds(kc, 2, gamma * (n - 1) * L)
+KNITRO.KN_set_con_eqbnds(kc, 3, 0.0)
+# Middle constraints
+for i in 4:(n+2)
+	KNITRO.KN_set_con_eqbnds(kc, i, L^2)
+end
 
-# Add coefficients for linear (first) constraint.
-lconIndexVars = Int32[0, 1, 2] # Identify variables
-lconCoefs     = [8.0, 14.0, 7.0] # Coefficients of constraint
-KNITRO.KN_add_con_linear_struct(kc, 0, lconIndexVars, lconCoefs)
+# Add coefficients for boundary constraints
+KNITRO.KN_add_con_linear_struct(kc, 0, Int32[0], [1.0])
+KNITRO.KN_add_con_linear_struct(kc, 1, Int32[n], [1.0])
+KNITRO.KN_add_con_linear_struct(kc, 2, Int32[n-1], [1.0])
+KNITRO.KN_add_con_linear_struct(kc, 3, Int32[2n-1], [1.0])
 
-# Add coefficients for quadratic (second) constraint
-qconIndexVars1 = Int32[0, 1, 2]
-qconIndexVars2 = Int32[0, 1, 2]
-qconCoefs      = [1.0, 1.0, 1.0]
-KNITRO.KN_add_con_quadratic_struct(kc, 1, qconIndexVars1, qconIndexVars2, qconCoefs) # Element-wise product for the second constraint
+# Add coefficients for middle constraints
+for i in 0:(n-2)
+	qconIndexVars1 = Int32[i, i, i+1, n+i, n+i, n+i+1]
+	qconIndexVars2 = Int32[i, i+1, i+1, n+i, n+i+1, n+i+1]
+	qconCoefs      = [1.0, -2.0, 1.0, 1.0, -2.0, 1.0]
+	KNITRO.KN_add_con_quadratic_struct(kc, 4+i, qconIndexVars1, qconIndexVars2, qconCoefs)
+end
 
 # Set minimize or maximize(if not set, assumed minimize)
 KNITRO.KN_set_obj_goal(kc, KNITRO.KN_OBJGOAL_MINIMIZE) # Minimize objective
 
-# Add constant value to the objective.
-KNITRO.KN_add_obj_constant(kc, 1000.0) # Add constant to objective
-
 # Set quadratic objective structure.
-qobjIndexVars1 = Int32[0, 1, 2, 0, 0]
-qobjIndexVars2 = Int32[0, 1, 2, 1, 2]
-qobjCoefs      = [-1.0, -2.0, -1.0, -1.0, -1.0]
+lobjIndexVars1 = convert(Array{Int32, 1}, collect(n:(2n-1)))
+lobjCoefs      = ones(n)
+lobjCoefs[1] = 0.5
+lobjCoefs[end] = 0.5
 
-KNITRO.KN_add_obj_quadratic_struct(kc, qobjIndexVars1, qobjIndexVars2, qobjCoefs) # Element-wise product for the objective
+KNITRO.KN_add_obj_linear_struct(kc, lobjIndexVars1, lobjCoefs) # Element-wise product for the objective
 
 # Solve the problem.
 #
@@ -73,8 +88,11 @@ println("  KKT optimality violation = ", KNITRO.KN_get_abs_opt_error(kc))
 # Delete the Knitro solver instance.
 KNITRO.KN_free(kc)
 
-@testset "Example QCQP1" begin
-    @test nStatus == 0
-    @test objSol ≈ 936.
-    @test x ≈ [0., 0., 8.]
-end
+# @testset "Example QCQP1" begin
+#     @test nStatus == 0
+#     @test objSol ≈ 936.
+#     @test x ≈ [0., 0., 8.]
+# end
+
+# Write solution to file for plotting
+writedlm("./Sol.dat", [x[1:n] x[n+1:end]])
