@@ -1,0 +1,63 @@
+\documentclass[11pt,a4paper,twocolumn]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+%\usepackage[subfolder,cleanup]{gnuplottex}
+%\usepackage{amsthm}
+%\usepackage{enumitem}
+%\usepackage{wrapfig}
+%\usepackage{subcaption}
+%\usepackage{hyperref}
+%\usepackage{tikz}
+
+% Nicer brackets for operators
+\let\originalleft\left
+\let\originalright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
+
+% Math operators
+\providecommand{\bigO}[1]{\ensuremath{\mathop{}\mathopen{}\mathcal{O}\mathopen{}\left(#1\right)}}
+
+% Macros
+\newcommand{\diff}[3][\hspace{-0.5pt}]{\frac{\textrm{d}^{#1}#2}{\textrm{d}{#3}^{#1}}}
+\newcommand{\pdiff}[3][\hspace{-0.5pt}]{\frac{\partial^{#1}#2}{\partial{#3}^{#1}}}
+\newcommand{\df}{\, \textrm{d}}
+%\newcommand{\eps}{\varepsilon}
+
+% Row colouring in tables
+%\usepackage[table]{xcolor}
+%\rowcolors{2}{gray!25}{white}
+
+% Margin size
+\newgeometry{margin=2cm}
+
+% Reference style
+\bibliographystyle{ieeetr}
+
+\title{Networks \\ InFoMM Assignment}
+\author{Brady Metherall}
+\date{16 March, 2020}
+
+\begin{document}
+\maketitle
+
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=0.75\columnwidth]{Heirarchy}
+	\caption{}
+	\label{fig:heir}
+\end{figure}
+
+\cite{debacco}
+
+\cite{wirth}
+
+\cite{vanderkam}
+
+\bibliography{Ref}
+
+\end{document}
