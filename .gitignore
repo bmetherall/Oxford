@@ -27,3 +27,8 @@ Mansfield/*
 *Blues.p
 .Rhistory
 /Case_Studies/footballx3
+*.ipynb_checkpoints/
+*.~*
+*__pycache__/
+*march-madness-data/
+*StandingPayment.pdf
