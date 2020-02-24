@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,twocolumn]{article}
+\documentclass[aps,twocolumn]{revtex4-1}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -11,7 +11,7 @@
 %\usepackage{wrapfig}
 %\usepackage{subcaption}
 %\usepackage{hyperref}
-%\usepackage{tikz}
+\usepackage{tikz}
 
 % Nicer brackets for operators
 \let\originalleft\left
@@ -36,13 +36,15 @@
 \newgeometry{margin=2cm}
 
 % Reference style
-\bibliographystyle{ieeetr}
-
-\title{Networks \\ InFoMM Assignment}
-\author{Brady Metherall}
-\date{16 March, 2020}
+%\bibliographystyle{ieeetr}
 
 \begin{document}
+
+\title{Predicting NCAA March Madness 2019 with SpringRank}
+\author{Brady Metherall}
+\noaffiliation
+\date{16 March, 2020}
+
 \maketitle
 
 \begin{figure}[tbp]
@@ -51,6 +53,39 @@
 	\caption{}
 	\label{fig:heir}
 \end{figure}
+
+\begin{figure}[tbp]
+	\centering
+	\begin{tikzpicture}
+		\centering
+		\node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[width=0.66\columnwidth]{Heirarchy}};
+
+		\fill[fill = black] (0.4,1) circle (0.6mm);
+		\fill[fill = purple] (0.4,0.667) circle (0.6mm);
+		\fill[fill = blue] (0.4,0.333) circle (0.6mm);
+		\fill[fill = cyan] (0.4,0) circle (0.6mm);
+
+		\node[anchor = west] at (0.5,1) {\scriptsize Winner};
+		\node[anchor = west] at (0.5,0.667) {\scriptsize Runner-up};
+		\node[anchor = west] at (0.5,0.333) {\scriptsize Final four};
+		\node[anchor = west] at (0.5,0) {\scriptsize Elite eight};
+
+		\fill[fill = green] (4.4,1) circle (0.6mm);
+		\fill[fill = yellow] (4.4,0.667) circle (0.6mm);
+		\fill[fill = orange] (4.4,0.333) circle (0.6mm);
+		\fill[fill = red] (4.4,0) circle (0.6mm);
+
+		\node[anchor = west] at (4.5,1) {\scriptsize Sweet 16};
+		\node[anchor = west] at (4.5,0.667) {\scriptsize Round of 32};
+		\node[anchor = west] at (4.5,0.333) {\scriptsize Round of 64};
+		\node[anchor = west] at (4.5,0) {\scriptsize Did not qualify};
+	\end{tikzpicture}
+	\caption{}
+	\label{fig:heir}
+\end{figure}
+
+
+colour = {1: 'black', 2: 'purple', 4: 'blue', 8: 'cyan', 16: 'green', 32: 'yellow', 64: 'orange', -1: 'red'}
 
 \cite{debacco}
 
