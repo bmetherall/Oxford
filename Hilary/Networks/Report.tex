@@ -1,4 +1,4 @@
-\documentclass[aps,twocolumn]{revtex4-1}
+\documentclass[a4paper,twocolumn,aps,prl]{revtex4-1}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -48,16 +48,19 @@
 
 \maketitle
 
-Each spring the National Collegiate Athletic Association (NCAA) hold a single-elimination tournament across the United States known as March Madness. The top 68 US college men's basketball teams in Division I take part, with the winner being crowned the national champion. The champions of each of the 32 Division I conferences automatically included, and the remaining 36 spots are determined by a selection committee. Since this process is done by a committee the teams given the final spots can be quite controversial. The tournament begins with four games that take the number of teams from 68 to 64, called the First Four, after which, the full 64 team single-elimination tournament begins. The First Four are comprised of the last teams selected by the selection committee. We shall examine using the network ranking algorithm SpringRank \cite{debacco} to predict the outcome of March Madness games in 2019 based on the scores from the regular season.
+\noindent
+Each spring the National Collegiate Athletic Association (NCAA) hold a single-elimination tournament across the United States known as March Madness. The tournament features 68 of the top US college men's basketball teams in Division I, with the winner being crowned the national champion. The champions of each of the 32 Division I conferences automatically qualify, and the remaining 36 spots are determined by a selection committee. Since this process is done by a committee the teams given the final spots can be quite controversial. For this reason, the final eight teams selected play for four spots in what is called the First Four, which takes the field from 68 teams down to 64. We use the network ranking algorithm SpringRank \cite{debacco} to predict the outcome of March Madness 2019 games based on the scores from the regular season.
 
-To construct our network we use the box scores of the 5910 NCAA games from 2019 before March Madness began \cite{wirth}. This includes games played in all three divisions of NCAA men's basketball---totalling 649 teams. From this, we construct the directed adjacency matrix, where each team is represented by a node, and each game is represented by a directed edge from the winner to the loser. We then compute the SpringRank from this matrix, and predict the team with the higher SpringRank will win the game. To compute the accuracy of this prediction we compare to the actual outcomes from March Madness 2019 \cite{vanderkam}.
+To construct our network we use the box scores of 5910 NCAA games from 2019 before March Madness began \cite{wirth}. This includes games played in all three divisions of NCAA men's basketball---a total of 649 teams. From this, we construct a directed graph and the associated adjacency matrix, where each team is represented by a node and each game is represented by an edge directed from the winner to the loser. We then compute the SpringRank from this matrix, and predict the team with the higher SpringRank to win the game.
+
+To compute the accuracy of this prediction we compare to the actual seedings and outcomes from March Madness 2019~\cite{vanderkam}. The graph for the top 64 teams by SpringRank is depicted in Figure \ref{fig:heir}, along with how far through the tournament they advanced. Eight of the top ten SpringRank teams had a top ten seed in the tournament. SpringRank preforms well at predicting the teams that advanced to the round of 16, however, the performance decreases further down the ranking. Several teams that did not qualify for the tournament are predicted to be in the top 64 by SpringRank---this is due to the qualification process. Any team that wins their conference automatically qualifies for March Madness, but, the relative strength of each conference varies significantly. Weaker conferences must have a team represented, even though that team may be considerably weaker than a team that did not qualify from a much stronger conference. Since SpringRank only considers the relative strength of each team, many teams that were eliminated in the round of 64 are ranked below teams that were unable to qualify. Additionally, Temple and St. John's, both of whom lost in the First Four, were ranked very highly out of the teams that did not make it to the top 64, as one would expect.
 
 \begin{figure}[tbp]
 	\centering
 	\begin{tikzpicture}
 		\centering
 		% Include figure
-		\node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[width=0.66\columnwidth]{Heirarchy}};
+		\node[anchor=south west,inner sep=0] at (0,0) {\includegraphics[width=159.22pt]{Heirarchy}};
 
 		% Left circles
 		\fill[fill = black] (0.15,1) circle (0.6mm);
@@ -99,15 +102,13 @@ To construct our network we use the box scores of the 5910 NCAA games from 2019 
 		\draw[->] (5,3.76) -- (2.95,3.76);
 		\draw[->] (5,2.305) -- (2.95,2.305);
 	\end{tikzpicture}
-	\caption{Top 64 teams from SpringRank and their progress in March Madness 2019. A green (red) edge denotes a game that the higher (lower) ranked team won.}
+	\caption{Top 64 teams from SpringRank and their progress in March Madness 2019. A green (red) edge denotes a game in which the higher (lower) ranked team won.}
 	\label{fig:heir}
 \end{figure}
 
-The graph for the top 64 teams by SpringRank is depicted in Figure \ref{fig:heir} with how far through the tournament they advanced. Eight of the top ten SpringRank teams also appear in the actual top ten seeds. SpringRank preforms well at predicting the teams that advanced to the round of 16, however, the performance decreases further down the ranking. Several teams that did not qualify for the tournament are predicted to be in the top 64 by SpringRank is due to the process of qualification. Any team that wins their conference automatically qualifies for March Madness, but, the relative strength of each conference varies significantly. Thus, weaker conferences must have a team automatically qualify, even though that team may be considerably worse than teams that did not qualify from much stronger conferences. Since SpringRank only ranks the relative strength of each team, many teams that were eliminated in the round of 64 are ranked below teams that were unable to qualify. Additionally, Temple and St. John's, whom lost in the First Four, were ranked very highly out of the teams that did not make it to the top 64.
+Using SpringRank to predict the winner of each game yields accuracies of $23/32$, $15/16$, $4/8$, $2/4$, $1/2$, $1/1$ for each round, respectively, and a total accuracy of $46/63 \approx 73.0\%$. The only game SpringRank incorrectly predicted in the round of 32 was when Auburn (18) upset Kansas (7) by a score of 89--75; Auburn continued on to the Final Four. Another point of interest is that the number one ranked team in the country, Duke, only made it to the round of 8. Duke (1) faced the very strong Michigan State (4), narrowly losing by a score of 67--68.
 
-Using SpringRank to predict the winner of each game yields accuracies of $23/32$, $15/16$, $4/8$, $2/4$, $1/2$, $1/1$ for each round, respectively, and a total accuracy of $46/63 \approx 73.0\%$. The only game SpringRank incorrectly predicted in the round of 32 was when Auburn (18) upset Kansas (7) by a score of 89--75; Auburn continued on to the Final Four. Another point of interest is that the number one ranked team in the country, Duke, only made it to the round of 8. Duke (1) played Michigan State (4), narrowly losing by a score of 67--68.
-
-SpringRank correctly predicted the winner of $73.0\%$ of the games during March Madness 2019---a large improvement over simply guessing the winner, and a $5\%$ increase from assuming the team with the higher seeding will win. Moreover, SpringRank generally predicted how well the top teams would fare.
+SpringRank correctly predicted the winner of $73.0\%$ of the games during March Madness 2019---a large improvement over simply guessing the winner, and a $5\%$ increase from assuming the team with the higher seed would win. Moreover, SpringRank generally predicted how well the top teams would fare, correctly predicting 14 of the teams to make the Sweet 16.
 
 \bibliography{Ref}
 
