@@ -36,8 +36,8 @@ rosenconst(x, y) = -(x - 1)**2 - y + 1 <= 0 ? (x + y - 2 <= 0 ? rosen(x, y) : 1/
 
 
 set view 50, 320
-set xtics offset 1
-set ytics offset 0
+set xtics offset 0.5
+set ytics offset -0.5
 
 set output 'Rosen.tex'
 	set multiplot
@@ -51,8 +51,8 @@ unset size
 unset origin
 
 set view 50, 50
-set xtics offset 0
-set ytics offset 1
+set xtics offset -0.5
+set ytics offset 0.5
 
 set output 'RosenConst.tex'
 	set multiplot
