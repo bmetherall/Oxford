@@ -75,12 +75,12 @@ set key width -3.5
 set xlabel '$n$'
 set ylabel 'Error'
 
-a = 2 # Initial guesses
+a = 5 # Initial guesses
 b = -2
 
 f(x) = b * x + log(a)
 
-fit [log(1):log(60)] f(x) 'Error.dat' using (log($1)):(log($2)) via a, b
+fit [log(1):log(140)] f(x) 'Error.dat' using (log($1)):(log($2)) via a, b
 
 set output 'Convergence.tex'
 	plot a * x**b not lc 2 dt 5, \
