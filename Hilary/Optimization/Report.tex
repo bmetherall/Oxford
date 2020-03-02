@@ -52,40 +52,48 @@
 \begin{document}
 \maketitle
 
+We explore numerically solving unconstrained and constrained optimization problems using the solve KNITRO using the Julia interface. First we examine the Rosenbrock function, the well-known test problem. We then investigate the discrete catenary problem and how the solution relates to the continuous case.
+
 \section{Rosenbrock Function}
-
-unconstrained rosenbrock
-
-quadratic constrained rosenbrock wikipedia
-
-
+We begin by using KNITRO to solve a well known test problem in optimization---minimizing the Rosenbrock function:
 \begin{align}
-	\min_{x, y \in \mathbb{R}} 100(y - x^2)^2 + (1 - x)^2
+	\min_{x, y \in \mathbb{R}} 100(y - x^2)^2 + (1 - x)^2.
+	\label{eq:rosen}
 \end{align}
+This function is useful to test minimization algorithms with because it has a unique minimum, $(1,1)$, but has a very small gradient within a valley. The Rosenbrock function is plotted in Figure \ref{fig:rosenunconst}. Additionally, we impose the constraints 
+\begin{equation}
+	\begin{aligned}
+		(x - 1)^2 + y &\geq 1, \\
+		x + y &\leq 2,
+	\end{aligned}
+	\label{eq:rosenconst}
+\end{equation}
+to further test KNITRO. With these constraints the minimum $(1,1)$ is still feasible, but at the boundary (Figure \ref{fig:rosenconst}).
 
-\begin{align}
-	(x - 1)^2 + y &\geq 1 \\
-	x + y &\leq 2
-\end{align}
-
-\begin{figure}[tbp]
+\begin{figure}[tb]
 	\centering
-	\input{Rosen}
-	\caption{}
+	\begin{subfigure}{\columnwidth}
+		\centering
+		\input{Rosen}
+		\caption{Unconstrained.}
+		\label{fig:rosenunconst}
+	\end{subfigure} \\
+	\begin{subfigure}{\columnwidth}
+		\centering
+		\input{RosenConst}
+		\caption{Constrained by \eqref{eq:rosenconst}.}
+		\label{fig:rosenconst}
+	\end{subfigure}
+	\caption{Rosenbrock function given by \eqref{eq:rosen}.}
 	\label{fig:rosen}
 \end{figure}
 
-\begin{figure}[tbp]
-	\centering
-	\input{RosenConst}
-	\caption{}
-	\label{fig:rosenconst}
-\end{figure}
+Both the unconstrained and constrained minimization problems are solved with KNITRO for a variety of initial points with a range of derivative information given. The number of iterations required to find the solution $(1,1)$ are shown in Table \ref{tab:iterations}. Generally, providing the analytic gradient does not reduce the number of iterations required to converge---especially for the starting values of $(0,0)$ and $(2,4)$ where the solver does not converge. It is suspected this is because these points lay on the line $y = x^2$, and so one of the partial derivatives vanish. However, by providing the Hessian the number of iterations decreases substantially most of the time. Interestingly, the unconstrained problem requires more iterations that the constrained one.
 
 \begin{table*}[tbp]
 	\centering
 	\begin{tabular}{lcccccc}
-		Starting value & $(-2,-3)$ & $(2,1)$ & $(-3,4)$ & $(\pi,-\textrm{e})$ & $(0,0)$ & $(2,4)$ \\
+		Starting point & $(-2,-3)$ & $(2,1)$ & $(-3,4)$ & $(\pi,-\textrm{e})$ & $(0,0)$ & $(2,4)$ \\
 		\noalign{\smallskip}\Xhline{2.5\arrayrulewidth}\hline\noalign{\smallskip}
 		\multicolumn{7}{c}{Unconstrained} \\
 		\noalign{\smallskip}\hline\noalign{\smallskip}
@@ -105,7 +113,7 @@ quadratic constrained rosenbrock wikipedia
 	\label{tab:iterations}
 \end{table*}
 
-
+With an understanding of how to use KNITRO, we move onto a more exciting problem.
 
 \section{Catenary Problem}
 We now turn our attention to the catenary problem. The catenary problem is concerned with the shape of a freely hanging rope with fixed endpoints neglecting bending stiffness. The solution is the shape that minimizes the gravitational potential energy, and thus is a staple in calculus of variations and mechanics courses. In this section we focus our attention on the discrete analogue of this problem. We instead consider a series of $n$ rigid beams attached together. By assuming the gravitational potential energy is focused entirely at the centre of each beam, we obtain the expression
@@ -165,6 +173,8 @@ We see that for $n = 4$ (Figure \ref{fig:beam4}) the discrete solution closely a
 	\caption{The $L^2$ norm of the difference between the discrete solution and the continuous solution.}
 	\label{fig:convergence}
 \end{figure}
+
+\section{Conclusion}
 
 %\bibliography{Ref}
 
