@@ -11,7 +11,7 @@ using Test
 using DelimitedFiles
 using LinearAlgebra
 
-function cont_sol(x; a = 4.228, w = 5)
+function cont_sol(x; a = 4.22752, w = 5)
 	return a .* (cosh.((x .- w) ./ a) .- cosh.(w / a))
 end
 
@@ -19,11 +19,11 @@ function lin_inter(x, y, x0)
 	return (y[2] - y[1]) / (x[2] - x[1]) .* (x0 .- x[1]) .+ y[1]
 end
 
-function error(x, y, n = 10^3)
-	x0 = range(x[1], stop=x[2], length=n)
+function error(x, y, dx = 10^-3)
+	x0 = range(x[1], stop=x[2], step=dx)
 	discrete = lin_inter(x, y, x0)
 	continous = cont_sol(x0)
-	return norm(discrete - continous, 2) * (x0[2] - x0[1])
+	return sum((discrete .- continous).^2) * (x0[2] - x0[1])
 end
 
 function total_error(x, y)
@@ -31,11 +31,11 @@ function total_error(x, y)
 	for i in 1:(length(x) - 1)
 		s += error(x[i:i+1], y[i:i+1])
 	end
-	return s
+	return sqrt(s)
 end
 
-function solve(n, gamma = 0.8, m = 1.0, g = 1.0)
-	L = 10.0 / (gamma * (n - 1))
+function solve(n; xmax = 10.0, gamma = 0.8, m = 1.0, g = 1.0)
+	L = xmax / (gamma * (n - 1))
 
 	# Create a new Knitro solver instance.
 	kc = KNITRO.KN_new()
@@ -51,14 +51,14 @@ function solve(n, gamma = 0.8, m = 1.0, g = 1.0)
 	# Add the variables and set their bounds and initial values.
 	# Note: unset bounds assumed to be infinite.
 	KNITRO.KN_add_vars(kc, 2n) # Number of variables in problem
-	KNITRO.KN_set_var_primal_init_values(kc,  ones(2n)) # Initial starting point
+	KNITRO.KN_set_var_primal_init_values(kc,  -ones(2n)) # Initial starting point
 
 	# Add the constraints and set their bounds.
 	KNITRO.KN_add_cons(kc, n + 3) # Number of constraints
 	# Boundary constraints
 	KNITRO.KN_set_con_eqbnds(kc, 0, 0.0)
 	KNITRO.KN_set_con_eqbnds(kc, 1, 0.0)
-	KNITRO.KN_set_con_eqbnds(kc, 2, gamma * (n - 1) * L)
+	KNITRO.KN_set_con_eqbnds(kc, 2, xmax)
 	KNITRO.KN_set_con_eqbnds(kc, 3, 0.0)
 	# Middle constraints
 	for i in 4:(n+2)
@@ -120,13 +120,13 @@ function loop_solve(; nmin = 3, nmax = 51)
 	close(io)
 end
 
-n = 11 # Number of links, one more than number of beams
+n = 3 # Number of links, one more than number of beams
 
 x, y = solve(n)
 
-#@time loop_solve(nmax = 3)
+@time loop_solve(nmax = 3)
 
-#@time loop_solve(nmin = 2, nmax = 101)
+@time loop_solve(nmin = 2, nmax = 141)
 
 # Write solution to file for plotting
-writedlm("./Sol$n.dat", [x y])
+#writedlm("./Sol$n.dat", [x y])

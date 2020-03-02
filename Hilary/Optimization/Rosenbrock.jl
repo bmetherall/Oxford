@@ -106,18 +106,18 @@ KNITRO.KN_add_vars(kc, n)
 KNITRO.KN_set_var_lobnds(kc,  [-KNITRO.KN_INFINITY, -KNITRO.KN_INFINITY]) # not necessary since infinite
 KNITRO.KN_set_var_upbnds(kc,  [KNITRO.KN_INFINITY, KNITRO.KN_INFINITY])
 # Define an initial point. If not set, Knitro will generate one.
-KNITRO.KN_set_var_primal_init_values(kc, [-2.0, -3.0])
+KNITRO.KN_set_var_primal_init_values(kc, [3.14159265358979, -2.718281828])
 
 # Add the constraints and set their lower bounds
-m = 2
-KNITRO.KN_add_cons(kc, m)
-KNITRO.KN_set_con_upbnds(kc, [0.0, 2.0])
+#m = 2
+#KNITRO.KN_add_cons(kc, m)
+#KNITRO.KN_set_con_upbnds(kc, [0.0, 2.0])
 
 # Both constraints are quadratic so we can directly load all the
 # structure for these constraints.
 
 # First load quadratic structure for the first constraint
-KNITRO.KN_add_con_quadratic_struct(kc, 0, 0, 0, -1.0)
+#KNITRO.KN_add_con_quadratic_struct(kc, 0, 0, 0, -1.0)
 
 # Load structure for the second constraint.  below we add the linear
 # structure and the quadratic structure separately, though it
@@ -126,10 +126,10 @@ KNITRO.KN_add_con_quadratic_struct(kc, 0, 0, 0, -1.0)
 # supports adding linear terms.
 
 # Add linear term in the first constraint
-KNITRO.KN_add_con_linear_struct(kc, 0, Int32[1, 1], [2.0, -1.0])
+#KNITRO.KN_add_con_linear_struct(kc, 0, Int32[1, 1], [2.0, -1.0])
 
 # Add linear term in the second constraint
-KNITRO.KN_add_con_linear_struct(kc, 1, Int32[1, 1], [1.0, 1.0])
+#KNITRO.KN_add_con_linear_struct(kc, 1, Int32[1, 1], [1.0, 1.0])
 
 # Add a callback function "callbackEvalF" to evaluate the nonlinear
 #(non-quadratic) objective.  Note that the linear and
@@ -163,7 +163,7 @@ KNITRO.KN_set_cb_hess(kc, cb, KNITRO.KN_DENSE_ROWMAJOR, callbackEvalH!)
 # Specify that the user is able to provide evaluations
 # of the hessian matrix without the objective component.
 # turned off by default but should be enabled if possible.
-KNITRO.KN_set_param(kc, KNITRO.KN_PARAM_HESSIAN_NO_F, KNITRO.KN_HESSIAN_NO_F_ALLOW)
+#KNITRO.KN_set_param(kc, KNITRO.KN_PARAM_HESSIAN_NO_F, KNITRO.KN_HESSIAN_NO_F_ALLOW)
 
 # Set minimize or maximize(if not set, assumed minimize)
 KNITRO.KN_set_obj_goal(kc, KNITRO.KN_OBJGOAL_MINIMIZE)
@@ -182,21 +182,22 @@ nStatus, objSol, x, lambda_ = KNITRO.KN_get_solution(kc)
 println("Optimal objective value  = ", objSol)
 println("Optimal x(with corresponding multiplier)")
 for i in 1:n
-    println("  x[$i] = ", x[i], "(lambda = ",  lambda_[m+i], ")")
+    #println("  x[$i] = ", x[i], "(lambda = ",  lambda_[m+i], ")")
+    println("  x[$i] = ", x[i])
 end
 println("Optimal constraint values(with corresponding multiplier)")
-c = KNITRO.KN_get_con_values(kc)
-for j in 1:m
-    println("  c[$j] = ", c[j], "(lambda = ",  lambda_[j], ")")
-end
+#c = KNITRO.KN_get_con_values(kc)
+#for j in 1:m
+#    println("  c[$j] = ", c[j], "(lambda = ",  lambda_[j], ")")
+#end
 println("  feasibility violation    = ", KNITRO.KN_get_abs_feas_error(kc))
 println("  KKT optimality violation = ", KNITRO.KN_get_abs_opt_error(kc))
 
 # Delete the Knitro solver instance.
 #= KNITRO.KN_free(kc) =#
 
-@testset "Exemple HS15 nlp1" begin
+@testset "Example HS15 nlp1" begin
     @test nStatus == 0
-    @test objSol ≈ 0 atol=1e-4
-    @test x ≈ [1, 1] atol=1e-4
+    @test objSol ≈ 0 atol=1e-3
+    @test x ≈ [1, 1] atol=1e-3
 end
