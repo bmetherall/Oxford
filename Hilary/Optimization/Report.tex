@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,twocolumn]{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage{amsfonts}
 \usepackage{amsmath}
@@ -15,6 +15,7 @@
 %\usepackage{tikz}
 \usepackage{makecell}
 %\usepackage{dblfloatfix}
+\usepackage{url}
 
 \usepackage{lipsum}
 
@@ -43,7 +44,7 @@
 %\renewcommand\bottomfraction{.75}
 
 % Reference style
-%\bibliographystyle{ieeetr}
+\bibliographystyle{ieeetr}
 
 \title{Continuous Optimization \\ InFoMM Assignment}
 \author{Brady Metherall}
@@ -52,15 +53,15 @@
 \begin{document}
 \maketitle
 
-We explore numerically solving unconstrained and constrained optimization problems using the solve KNITRO using the Julia interface. First we examine the Rosenbrock function, the well-known test problem. We then investigate the discrete catenary problem and how the solution relates to the continuous case.
+We explore numerically solving unconstrained and constrained optimization problems with the solver KNITRO \cite{knitro} and the Julia interface \cite{juliadoc, juliaopt}. First we examine the Rosenbrock function, the well-known test problem. We then investigate the discrete catenary problem and how the solution relates to the continuous case.
 
 \section{Rosenbrock Function}
-We begin by using KNITRO to solve a well known test problem in optimization---minimizing the Rosenbrock function:
+We begin by using KNITRO to solve a well-known test problem in optimization---minimizing the 2-d Rosenbrock function:
 \begin{align}
 	\min_{x, y \in \mathbb{R}} 100(y - x^2)^2 + (1 - x)^2.
 	\label{eq:rosen}
 \end{align}
-This function is useful to test minimization algorithms with because it has a unique minimum, $(1,1)$, but has a very small gradient within a valley. The Rosenbrock function is plotted in Figure \ref{fig:rosenunconst}. Additionally, we impose the constraints 
+This function is useful to test minimization algorithms because it has a unique minimum, $(1,1)$, but has a very small gradient within a valley. The Rosenbrock function is plotted in Figure \ref{fig:rosenunconst}. Additionally, we impose the constraints 
 \begin{equation}
 	\begin{aligned}
 		(x - 1)^2 + y &\geq 1, \\
@@ -68,17 +69,17 @@ This function is useful to test minimization algorithms with because it has a un
 	\end{aligned}
 	\label{eq:rosenconst}
 \end{equation}
-to further test KNITRO. With these constraints the minimum $(1,1)$ is still feasible, but at the boundary (Figure \ref{fig:rosenconst}).
+to further test KNITRO. With these constraints the minimum $(1,1)$ is still feasible, but lays on the boundary (Figure \ref{fig:rosenconst}).
 
-\begin{figure}[tb]
+\begin{figure}[tbp]
 	\centering
-	\begin{subfigure}{\columnwidth}
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\input{Rosen}
 		\caption{Unconstrained.}
 		\label{fig:rosenunconst}
-	\end{subfigure} \\
-	\begin{subfigure}{\columnwidth}
+	\end{subfigure} %
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\input{RosenConst}
 		\caption{Constrained by \eqref{eq:rosenconst}.}
@@ -88,9 +89,9 @@ to further test KNITRO. With these constraints the minimum $(1,1)$ is still feas
 	\label{fig:rosen}
 \end{figure}
 
-Both the unconstrained and constrained minimization problems are solved with KNITRO for a variety of initial points with a range of derivative information given. The number of iterations required to find the solution $(1,1)$ are shown in Table \ref{tab:iterations}. Generally, providing the analytic gradient does not reduce the number of iterations required to converge---especially for the starting values of $(0,0)$ and $(2,4)$ where the solver does not converge. It is suspected this is because these points lay on the line $y = x^2$, and so one of the partial derivatives vanish. However, by providing the Hessian the number of iterations decreases substantially most of the time. Interestingly, the unconstrained problem requires more iterations that the constrained one.
+Both the unconstrained and constrained minimization problems are solved with KNITRO for a variety of initial points and a range of derivative information given. The number of iterations required to find the solution $(1,1)$ are shown in Table \ref{tab:iterations}. Generally, providing the analytic gradient does not reduce the number of iterations required to converge---especially for the starting values of $(0,0)$ and $(2,4)$ where the solver does not converge at all. It is suspected this is because these points lay on the line $y = x^2$, and so one of the partial derivatives vanish. However, by providing the Hessian the number of iterations decreases substantially most of the time. Interestingly, the unconstrained problem requires more iterations than the constrained one.
 
-\begin{table*}[tbp]
+\begin{table}[tbp]
 	\centering
 	\begin{tabular}{lcccccc}
 		Starting point & $(-2,-3)$ & $(2,1)$ & $(-3,4)$ & $(\pi,-\textrm{e})$ & $(0,0)$ & $(2,4)$ \\
@@ -111,35 +112,30 @@ Both the unconstrained and constrained minimization problems are solved with KNI
 	\footnotesize{$^1$Did not converge.}
 	\caption{Iterations needed to converge to the minimum of the constrained and unconstrained Rosenbrock function.}
 	\label{tab:iterations}
-\end{table*}
+\end{table}
 
-With an understanding of how to use KNITRO, we move onto a more exciting problem.
+With an understanding of how to use KNITRO, we move on to a more exciting problem.
 
 \section{Catenary Problem}
-We now turn our attention to the catenary problem. The catenary problem is concerned with the shape of a freely hanging rope with fixed endpoints neglecting bending stiffness. The solution is the shape that minimizes the gravitational potential energy, and thus is a staple in calculus of variations and mechanics courses. In this section we focus our attention on the discrete analogue of this problem. We instead consider a series of $n$ rigid beams attached together. By assuming the gravitational potential energy is focused entirely at the centre of each beam, we obtain the expression
+We now turn our attention to the catenary problem. The catenary problem considers the shape of a freely hanging rope with fixed endpoints neglecting bending stiffness. The solution is the shape that minimizes the gravitational potential energy, and thus this problem is a staple in calculus of variations and mechanics courses. In this section we focus our efforts on the discrete analogue of this problem. We instead consider a series of $n$ rigid beams attached together. By assuming the gravitational potential energy is focused entirely at the centre of each beam, we obtain the expression
 \begin{align}
 	U = m g \left( \frac{1}{2} y_0 + \frac{1}{2} y_n + \sum_{i = 1}^{n-1} y_i \right)
 \end{align}
 for the total potential energy, as the midpoint is the average of the endpoints of each beam. Additionally, there are multiple constraints of the system. We assume both endpoints are fixed at the same height, and that each beam is the same length, $L$. Combining these constraints with the expression for the potential energy yields the optimization problem
 \begin{gather}
-	\min_{\mathbf{x}, \mathbf{y} \in \mathbb{R}^{n+1}} m g \left( \frac{1}{2} y_0 + \frac{1}{2} y_n + \sum_{i = 1}^{n-1} y_i \right) \\
+	\min_{\mathbf{x}, \mathbf{y} \in \mathbb{R}^{n+1}} m g \left( \frac{1}{2} y_0 + \frac{1}{2} y_n + \sum_{i = 1}^{n-1} y_i \right), \\
 	\begin{align}
 		x_0 &= 0, & x_n &= \gamma n L, \nonumber \\
 		y_0 &=0, & y_n &= 0,
 	\end{align} \\
-	(x_i - x_{i+1})^2 + (y_i - y_{i+1})^2 = L^2, \nonumber
+	(x_{i+1} - x_i)^2 + (y_{i+1} - y_i)^2 = L^2, \nonumber
 \end{gather}
-where $\gamma$ is the ratio of the width of the span to the total length of the beams. While solving the problem we use the the following numerical values:
-\begin{gather}
-	\begin{align}
-		x_n &= 10, & g &= 1, & m &= 1,
-	\end{align} \\
-	\begin{align}
-		\gamma &= \frac{4}{5}, & L &= \frac{x_n}{\gamma n}.
-	\end{align}
-\end{gather}
+where $\gamma$ is the ratio of the span to the total length of the beams. While solving the problem we use the the following numerical values:
+\begin{align}
+	x_n &= 10, & g &= 1, & m &= 1, & \gamma &= \frac{4}{5}, & L &= \frac{x_n}{\gamma n}.
+\end{align}
 
-\begin{figure*}[tbp]
+\begin{figure}[tbp]
 	\centering
 	\begin{subfigure}{\textwidth}
 		\centering
@@ -155,7 +151,7 @@ where $\gamma$ is the ratio of the width of the span to the total length of the 
 	\end{subfigure}
 	\caption{Solution of the discrete catenary problem.}
 	\label{fig:catenary}
-\end{figure*}
+\end{figure}
 
 The solutions from KNITRO for two values of $n$ can be found in Figure \ref{fig:catenary}. We shall compare our results to the solution of the continuous case, given by
 \begin{align}
@@ -165,7 +161,7 @@ where $a$ is the positive solution to
 \begin{align}
 	\frac{x_n}{2a} &= \gamma \sinh \left( \frac{x_n}{2a} \right).
 \end{align}
-We see that for $n = 4$ (Figure \ref{fig:beam4}) the discrete solution closely approximates the continuous solution. Moreover, it is evident from $n = 10$ (Figure \ref{fig:beam10}) that as $n \rightarrow \infty$ the continuous solution will be obtained. This observation is justified by examining the $L^2$ norm of the difference of the two solutions for a range of number of beams---the result of this can be seen in Figure \ref{fig:convergence}. We find that the discrete solution converges to the continuous solution approximately quadratically. However, when $n \gtrsim 140$ KNITRO is no longer able to solve the optimization problem since the number of variables is approaching $300$.
+We see that for $n = 4$ (Figure \ref{fig:beam4}) the discrete solution closely approximates the continuous solution. Moreover, it is evident from $n = 10$ (Figure \ref{fig:beam10}) that as $n \rightarrow \infty$ the continuous solution will be obtained. This observation is justified by examining the $L^2$ norm of the difference of the two solutions for a range of number of beams---the result of this can be seen in Figure \ref{fig:convergence}. We find that the discrete solution converges to the continuous solution approximately quadratically. However, when $n \gtrsim 140$ KNITRO is no longer able to solve the optimization problem since the number of variables becomes too large.
 
 \begin{figure}[tbp]
 	\centering
@@ -175,7 +171,8 @@ We see that for $n = 4$ (Figure \ref{fig:beam4}) the discrete solution closely a
 \end{figure}
 
 \section{Conclusion}
+We investigated using the solver KNITRO to solve both unconstrained and constrained optimization problems. We first explored the number of iterations required to converge to the minimum of the Rosenbrock function. We then solved the discrete catenary problem for a wide range of number of beams. From this we compared the discrete solutions to the continuous solution and found that the discrete solution converged quadratically.
 
-%\bibliography{Ref}
+\bibliography{Ref}
 
 \end{document}

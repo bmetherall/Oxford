@@ -62,6 +62,7 @@ set output 'RosenConst.tex'
 	unset multiplot
 set out
 
+set terminal epslatex color size 5in,2.25in lw 3
 # Convergence
 reset
 set grid
@@ -88,7 +89,6 @@ set output 'Convergence.tex'
 		1/0 lc 2 dt 5 t sprintf('$%1.2f n^{%1.2f}$', a, b)
 set out
 
-set terminal epslatex color size 5in,2.25in lw 3
 # Solution
 reset
 
