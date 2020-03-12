@@ -1,0 +1,110 @@
+\documentclass[mathserif]{beamer}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor,graphicx}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{mathrsfs}
+\usepackage[subfolder,cleanup]{gnuplottex}
+
+\usetheme{InFoMM}
+
+\DeclareMathOperator{\sgn}{sgn}
+
+\title{Finite Element Method for the Tricomi Equation}
+\date{March 2020}
+\author{Brady Metherall}
+
+\begin{document}
+\frame{\titlepage}
+
+\frame{
+	\frametitle{Tricomi Equation}
+	The Tricomi equation \cite{aziz},
+	\begin{align}
+		k(y) u_{xx} + u_{yy} = f,
+		\label{eq:tricomi}
+	\end{align}
+	arises when studying transonic flow in fluid mechanics. The function $k$ is assumed to be
+	\begin{itemize}
+		\item smooth in the domain.
+		\item monotonic increasing with $y$.
+		\item of the same sign as $y$, that is, $\sgn{k} = \sgn{y}$.
+	\end{itemize}
+	The most common form is $k(y) = y$, which is analyzed in \cite{trangenstein}.
+}
+
+\frame{
+	\frametitle{Tricomi Equation}
+	We rewrite \eqref{eq:tricomi} as
+	\begin{align}
+		Lu = f
+	\end{align}
+	within the domain $\Omega$ bounded by $\Gamma_0$, $\Gamma_1$, and $\Gamma_2$. Here $\Gamma_0$ is a curve in the upper half-plane connecting $(-1,0)$ and $(1,0)$, and $\Gamma_1$ and $\Gamma_2$ are the characteristics passing through $(-1,0)$ and $(1,0)$, respectively. The boundary value problem can now be stated as
+	\begin{align}
+		L u &= f & \text{in } &\Omega, \\
+		u &= 0 & \text{on } &\Gamma_0 \cup \Gamma_1.
+	\end{align}
+}
+
+\frame{
+	\frametitle{Tricomi Domain}
+	\begin{figure}
+		\centering
+		\input{Domain}
+		\caption{Example domain of $y u_{xx} + u_{yy} = 0$.}
+		\label{fig:dom}
+	\end{figure}
+}
+
+\frame{
+	\frametitle{Weak Formulation}
+	We define the function space, $W$, as
+	\begin{align*}
+		W = \{ \phi \in C(\bar{\Omega}) \cap H^2(\Omega) \cap H^1(\partial \Omega) &: \\
+		L \phi \in L^2(\Omega) &\text{ and } \phi|_{\Gamma_0 \cup \Gamma_1} = 0 \}.
+	\end{align*}
+	Then the weak formulation can be phrased as: given $f \in L^2(\Omega)$, we wish to find $u \in W$ such that
+	\begin{align}
+		(Lu, lv)_{L^2(\Omega)} = (f, lv)_{L^2(\Omega)}
+	\end{align}
+	for all $v \in W$. $l : W \rightarrow L^2(\Omega)$ is defined as
+	\begin{align}
+		l \phi = \alpha_1 \phi_x + \alpha_2 \phi_y
+	\end{align}
+	for all $\phi \in W$, where $\alpha_1$ and $\alpha_2$ are known functions.
+}
+
+% \frame{
+% 	\frametitle{Continuity and Coercivity}
+% 	Continuity follows from Cauchy-Schwarz
+% }
+
+\frame{
+	\frametitle{Finite Elements}
+	We let $\{ V_h \}$ be a family of finite dimensional subspaces $W$, and define an approximate solution, $u_h \in V_h$, to be one where given $f \in L^2(\Omega)$
+	\begin{align}
+		(Lu_h, lv_h)_{L^2(\Omega)} = (f, lv_h)_{L^2(\Omega)}
+		\label{eq:finite}
+	\end{align}
+	for all $v_h \in V_h$.
+
+	Let $\{ \phi_j \}$ be a basis for $V_h$, then \eqref{eq:finite} can be cast into the linear system
+	\begin{align}
+		\mathbf{Au} = \mathbf{b},
+	\end{align}
+	where $A_{ij} = (L \phi_j, l \phi_i)_{L^2(\Omega)}$, $b_i = (f, l \phi_i)_{L^2(\Omega)}$, and $u_h = \sum_i u_i \phi_i$.
+}
+
+\frame{
+	\frametitle{Error Analysis}
+
+}
+
+\frame{
+	\frametitle{References}
+	\bibliography{Ref}
+}
+
+
+\end{document}
