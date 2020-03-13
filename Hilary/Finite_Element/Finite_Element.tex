@@ -11,6 +11,9 @@
 
 \DeclareMathOperator{\sgn}{sgn}
 
+% \definecolor{mycolour}{RGB}{150, 150, 255}
+% \setbeamercolor{block body}{bg=mycolour,fg=black}
+
 \title{Finite Element Method for the Tricomi Equation}
 \date{March 2020}
 \author{Brady Metherall}
@@ -94,6 +97,35 @@
 		\mathbf{Au} = \mathbf{b},
 	\end{align}
 	where $A_{ij} = (L \phi_j, l \phi_i)_{L^2(\Omega)}$, $b_i = (f, l \phi_i)_{L^2(\Omega)}$, and $u_h = \sum_i u_i \phi_i$.
+}
+
+\frame{
+	\frametitle{Finite Elements}
+	\begin{lemma}
+		The matrix $\mathbf{A}$ is invertible.
+	\end{lemma}
+	\begin{proof}
+		Suppose there exists a vector $\mathbf{z}$ such that $\mathbf{Az} = \mathbf{0}$, and let $z_h = \sum_i z_i \phi_i$. Then
+		\begin{align}
+			0 &= \mathbf{z}^T \mathbf{Az}, \\
+			&= (L z_h, l z_h), \\
+			&\geq C \| z_h \|^2
+		\end{align}
+		by coercivity. Thus, $z_h = 0$ and $\mathbf{z} = \mathbf{0}$, and so $\mathbf{A}$ is invertible.
+	\end{proof}
+}
+
+\frame{
+	\frametitle{Finite Elements}
+	\begin{theorem}
+		There is a unique $u_h \in V_h$ satisfying the weak formulation
+		\begin{align}
+			(Lu_h, lv_h)_{L^2(\Omega)} = (f, lv_h)_{L^2(\Omega)}.
+		\end{align}
+	\end{theorem}
+	\begin{proof}
+		This follows immediately from the previous lemma since $\mathbf{A}$ has a non-zero determinant.
+	\end{proof}
 }
 
 \frame{
