@@ -25,16 +25,16 @@
 	\frametitle{Tricomi Equation}
 	The Tricomi equation \cite{aziz},
 	\begin{align}
-		k(y) u_{xx} + u_{yy} = f,
+		g(y) u_{xx} + u_{yy} = f,
 		\label{eq:tricomi}
 	\end{align}
-	arises when studying transonic flow in fluid mechanics. The function $k$ is assumed to be
+	arises when studying transonic flow in fluid mechanics. The function $g$ is assumed to be
 	\begin{itemize}
 		\item smooth in the domain.
 		\item monotonic increasing with $y$.
-		\item of the same sign as $y$, that is, $\sgn{k} = \sgn{y}$.
+		\item of the same sign as $y$, that is, $\sgn{g} = \sgn{y}$.
 	\end{itemize}
-	The most common form is $k(y) = y$, which is analyzed in \cite{trangenstein}.
+	The most common form is $g(y) = y$, which is analyzed in \cite{trangenstein}.
 }
 
 \frame{
@@ -71,7 +71,7 @@
 	\begin{align}
 		(Lu, lv)_{L^2(\Omega)} = (f, lv)_{L^2(\Omega)}
 	\end{align}
-	for all $v \in W$. $l : W \rightarrow L^2(\Omega)$ is defined as
+	for all $v \in W$. Here $l : W \rightarrow L^2(\Omega)$ is defined as
 	\begin{align}
 		l \phi = \alpha_1 \phi_x + \alpha_2 \phi_y
 	\end{align}
@@ -85,7 +85,7 @@
 
 \frame{
 	\frametitle{Finite Elements}
-	We let $\{ V_h \}$ be a family of finite dimensional subspaces $W$, and define an approximate solution, $u_h \in V_h$, to be one where given $f \in L^2(\Omega)$
+	We let $\{ V_h \}$ be a family of finite dimensional subspaces of $W$, and define an approximate solution, $u_h \in V_h$, to be one where given $f \in L^2(\Omega)$
 	\begin{align}
 		(Lu_h, lv_h)_{L^2(\Omega)} = (f, lv_h)_{L^2(\Omega)}
 		\label{eq:finite}
@@ -108,10 +108,10 @@
 		Suppose there exists a vector $\mathbf{z}$ such that $\mathbf{Az} = \mathbf{0}$, and let $z_h = \sum_i z_i \phi_i$. Then
 		\begin{align}
 			0 &= \mathbf{z}^T \mathbf{Az}, \\
-			&= (L z_h, l z_h), \\
-			&\geq C \| z_h \|^2
+			&= (L z_h, l z_h)_{L^2(\Omega)}, \\
+			&\geq C \| z_h \|^2_{L^2(\Omega)}
 		\end{align}
-		by coercivity. Thus, $z_h = 0$ and $\mathbf{z} = \mathbf{0}$, and so $\mathbf{A}$ is invertible.
+		by coercivity. Thus, $z_h \equiv 0$ and $\mathbf{z} = \mathbf{0}$, and so $\mathbf{A}$ is invertible.
 	\end{proof}
 }
 
@@ -130,7 +130,13 @@
 
 \frame{
 	\frametitle{Error Analysis}
-
+	\begin{theorem}
+		For $u \in W \cap H^s(\Omega)$ and with Lagrange elements of degree $k$ where $k + 1 \leq s$, there exists a positive constant, $C$, such that
+		\begin{align}
+			\| u - u_h \|_{H^1(\Omega)} \leq C h^{k-1} |u|_{H^{k+1}(\Omega)}.
+		\end{align}
+	\end{theorem}
+	Thus, the method will converge for $k \geq 2$ and $s \geq 3$. This error estimate requires quite a lot of smoothness, as is typical with mixed problems.
 }
 
 \frame{
